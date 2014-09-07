@@ -1,0 +1,51 @@
+\documentclass[a4paper,12pt,openany]{report}
+
+\usepackage{titling}
+\usepackage[margin=1in,headsep=0.5in,footskip=0.5in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage[framemethod=tikz]{mdframed}
+
+\setlength{\parindent}{15pt}
+
+\newcommand{\subtitle}[1]{
+	\posttitle{
+		\par\end{center}
+		\begin{center}\large#1\end{center}
+		\vskip0.5em
+	}
+}
+
+\newcommand{\coverphoto}[2]{
+	\postdate{
+		\par\end{center}
+		\begin{center}
+			\includegraphics[width=15cm]{#1}
+		\end{center}
+	}
+}
+
+
+\begin{document}
+% title page
+\title{CITS3402 High Performance Computing}
+%\subtitle{Wine Classification}
+\author{Mitchell Pomery\\
+21130887}
+\maketitle
+
+\clearpage
+
+% document
+
+\section*{Introduction}
+\paragraph \indent
+Intro
+
+\begin{thebibliography}{10}
+	\bibitem{linkback}text
+\end{thebibliography}
+
+\end{document}
