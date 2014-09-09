@@ -11,7 +11,7 @@
 #define halfchain 50 /* Ignore; not used here */
 #define nmode 100  /* Ignore; not used here */
 #define nprntstps 10001 /* Number of output lines */
-							/* Also, t_end here because output is at t = 1, 2 etc. */ 
+					/* Also, t_end here because output is at t = 1, 2 etc. */ 
 #define dt 0.001 /* Time step */
 #define pi 3.14159 /* Ignore; not used here */
 #define beta 0.7 /* Beware! beta is the nonlinear coefficient! */
@@ -24,24 +24,24 @@ double initialize(double *); /* Ignore; not used here */
 double normalmode(int ,double *, double *, double *);/* Ignore; not used here */
 
 main() {
-        struct timeval start, end;
-        double delta;
+	struct timeval start, end;
+	double delta;
 	double a = alpha;
 	double b = beta;
 	printf("Alpha is:  %lf \n",  a);
 	printf("Beta is :  %lf \n", b);
-
-
+	
+	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	int i, j, k, n, n1, prncnt, prntstps;
 	double v[chainlngth], x[chainlngth], tke, tpe, te, ke1, omegak[nmode];
 	double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
 	double t, t1, dx, hdt, hdt2,  twopi, twopisqr, alphaby4, cmass, cmom;
-
+	
 	prntstps = (int) (1.0 / dt);
-        gettimeofday(&start, NULL);
-        //char *buf=(char *)malloc(sizeof(char)*10000000);
-        //setvbuf(fp1, buf, _IOFBF, sizeof(buf));
+	gettimeofday(&start, NULL);
+	//char *buf=(char *)malloc(sizeof(char)*10000000);
+	//setvbuf(fp1, buf, _IOFBF, sizeof(buf));
 	alphaby4 = beta / 4.0;
 	fp = fopen("toten.dat","w");
 	fp1 = fopen("strsh.dat","w");
@@ -51,21 +51,22 @@ main() {
 	fp6 = fopen("ke.dat","w");
 	fp7 = fopen("acce.dat","w");
 	fp8 = fopen("pe.dat","w");
-
-        //start=time(NULL);
-/* Initialize the position, velocity, acceleration arrays */
+	
+	//start=time(NULL);
+	/* Initialize the position, velocity, acceleration arrays */
 	for (i=0; i < chainlngth; i++) { 
 		x[i] = 0.0;
 		acc[i] = 0.0;
 		v[i] = 0.0;
 	}
-
-/*
-Initial perturbation at the center of the chain and it is a double particle perturbation (EVEN Parity)
-*/
+	
+	/*
+	Initial perturbation at the center of the chain and it is a double particle
+	perturbation (EVEN Parity)
+	*/
 	x[50] = -0.98;
 	x[51] = +0.98;	// Even Parity
-
+	
 	dx = tke = tpe = te = 0.0;
 	for (i=0; i < chainlngth; i++) { 
 		ke[i] = 0.5 * v[i] * v[i];
@@ -90,45 +91,42 @@ Initial perturbation at the center of the chain and it is a double particle pert
 	fprintf(fp6,"\n");
 	te = tpe + tke; i = 0;
 	fprintf(fp,"%d\t%.10f\n", i, te);
-
+	
 	for (k=0; k < chainlngth; k++) 
 		fprintf(fp1,"%.10f\t", x[k]); 
 	fprintf(fp1,"\n"); 
-
+	
 	for (k=0; k < chainlngth; k++) 
 		fprintf(fp3,"%.10f\t", v[k]); 
 	fprintf(fp3,"\n"); 
-
+	
 	for (k=0; k < chainlngth; k++) 
 		fprintf(fp7,"%.10f\t", acc[k]); 
 	fprintf(fp7,"\n"); 
-
+	
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt; 
 	n = 1; n1 = 1;
-	while (n < nprntstps) { 
-
-/* new positions and mid-velocities; velocity-Verlet algorithm  */
-
+	while (n < nprntstps) {
+		
+		/* new positions and mid-velocities; velocity-Verlet algorithm  */
+		
 		for (j = 0; j < chainlngth; j++) {
 			x[j] += dt * v[j] + hdt2 * acc[j];
 			v[j] += hdt * acc[j];
 		}
-
-/* new accelerations */
-         
+		
+		/* new accelerations */
 		accel(x, acc);
-
-/* new final velocities; Ignore the variables cmom and cmass */
-    
+		
+		/* new final velocities; Ignore the variables cmom and cmass */
 		cmom = 0.0;
 		for (j = 0; j < chainlngth; j++) { 	
 			v[j] += hdt * acc[j]; cmom += v[j];
 		}
 		cmom /= chainlngth;
-
-/* Kinetic energies */
-
+		
+		/* Kinetic energies */
 		prncnt = n1 / prntstps;  //percent completion
 		if (prncnt == 1) {  //if 100% done, print all
 			tke = tpe = te = dx = 0.0;  //reset all variables
@@ -152,7 +150,7 @@ Initial perturbation at the center of the chain and it is a double particle pert
 			dx = -x[chainlngth - 1];
 			fac = dx * dx;
 			pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-
+		
 			fprintf(fp8,"%.10f\n", pe[i]);
 			tpe += pe[i];
 			fprintf(fp5, "%d\t%.10f\n", i, cmass);
@@ -179,22 +177,20 @@ Initial perturbation at the center of the chain and it is a double particle pert
 	}
 	fclose(fp); fclose(fp1); fclose(fp3); fclose(fp5); 
 	fclose(fp6); fclose(fp7); fclose(fp8);
-  
+	
 	fprintf(fp2, "%d\t%d\n", i-1, n-1);
 	for (j = 0; j < chainlngth; j++) 
 		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[j], v[j], acc[j]);
 	fclose(fp2); 
-        gettimeofday(&end, NULL);
-        delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
-         end.tv_usec - start.tv_usec) / 1.e6;
-        printf("Total time=%f seconds\n", delta);
+	gettimeofday(&end, NULL);
+	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+	 end.tv_usec - start.tv_usec) / 1.e6;
+	printf("Total time=%f seconds\n", delta);
 }
 
 double accel(double *x, double *acc) {
-
 	double dxi, twodxi, dxipl1, dximn1, fac, fac1, fac2, fac13, fac23;
 	int i, j, k;
-
 	for (i = 0; i < chainlngth; i++) {
 		j = i - 1;
 		k = i + 1;
