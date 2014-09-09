@@ -2,3 +2,8 @@
 *.aux
 *.synctex.gz
 *.log
+
+#Code
+*.exe
+*.dat
+*.o
