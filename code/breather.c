@@ -8,20 +8,14 @@
 
 #define chainlngth 100
 #define nsprngs (chainlngth+1)
-#define halfchain 50 /* Ignore; not used here */
 #define nmode 100  /* Ignore; not used here */
 #define nprntstps 10001 /* Number of output lines */
-					/* Also, t_end here because output is at t = 1, 2 etc. */ 
 #define dt 0.001 /* Time step */
-#define pi 3.14159 /* Ignore; not used here */
 #define beta 0.7 /* Beware! beta is the nonlinear coefficient! */
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
-#define spcng 1.0 /* Just to make it explicit; not used in the program */
 
 double accel(double *, double *);
-double initialize(double *); /* Ignore; not used here */
-double normalmode(int ,double *, double *, double *);/* Ignore; not used here */
 
 main() {
 	struct timeval start, end;
@@ -30,7 +24,6 @@ main() {
 	double b = beta;
 	printf("Alpha is:  %lf \n",  a);
 	printf("Beta is :  %lf \n", b);
-	
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	int i, j, k, n, n1, prncnt, prntstps;
@@ -65,7 +58,7 @@ main() {
 	perturbation (EVEN Parity)
 	*/
 	x[50] = -0.98;
-	x[51] = +0.98;	// Even Parity
+	x[51] = +0.98; // Even Parity
 	
 	dx = tke = tpe = te = 0.0;
 	for (i=0; i < chainlngth; i++) { 
@@ -73,7 +66,7 @@ main() {
 		fprintf(fp6,"%.10f\t", ke[i]);
 		tke += ke[i];
 		j = i-1;
-		if (j == -1) { 
+		if (j == -1) {
 			dx = x[i];
 		} else {
 			dx = x[i] - x[j]; 
@@ -89,23 +82,24 @@ main() {
 	fprintf(fp8,"%.10f\n", pe[i]);
 	tpe += pe[i];
 	fprintf(fp6,"\n");
-	te = tpe + tke; i = 0;
+	te = tpe + tke;
+	i = 0;
 	fprintf(fp,"%d\t%.10f\n", i, te);
 	
-	for (k=0; k < chainlngth; k++) 
-		fprintf(fp1,"%.10f\t", x[k]); 
+	for (k=0; k < chainlngth; k++)
+		fprintf(fp1,"%.10f\t", x[k]);
 	fprintf(fp1,"\n"); 
 	
-	for (k=0; k < chainlngth; k++) 
-		fprintf(fp3,"%.10f\t", v[k]); 
-	fprintf(fp3,"\n"); 
+	for (k=0; k < chainlngth; k++)
+		fprintf(fp3,"%.10f\t", v[k]);
+	fprintf(fp3,"\n");
 	
-	for (k=0; k < chainlngth; k++) 
-		fprintf(fp7,"%.10f\t", acc[k]); 
+	for (k=0; k < chainlngth; k++)
+		fprintf(fp7,"%.10f\t", acc[k]);
 	fprintf(fp7,"\n"); 
 	
 	hdt = 0.5 * dt;
-	hdt2 = dt * hdt; 
+	hdt2 = dt * hdt;
 	n = 1; n1 = 1;
 	while (n < nprntstps) {
 		
@@ -121,8 +115,9 @@ main() {
 		
 		/* new final velocities; Ignore the variables cmom and cmass */
 		cmom = 0.0;
-		for (j = 0; j < chainlngth; j++) { 	
-			v[j] += hdt * acc[j]; cmom += v[j];
+		for (j = 0; j < chainlngth; j++) {
+			v[j] += hdt * acc[j];
+			cmom += v[j];
 		}
 		cmom /= chainlngth;
 		
@@ -136,10 +131,10 @@ main() {
 				fprintf(fp6,"%.10f\t",ke[j]);
 				tke += ke[j];
 				k = j-1;
-				if (k == -1) { 
+				if (k == -1) {
 					dx = x[j];
 				} else {
-					dx = x[j] - x[k]; 
+					dx = x[j] - x[k];
 				}
 				fac = dx * dx;
 				pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
