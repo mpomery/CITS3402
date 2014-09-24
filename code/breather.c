@@ -15,9 +15,9 @@
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
 
-double accel(double *, double *);
+void accel(double *, double *);
 
-main() {
+int main() {
 	struct timeval start, end;
 	double delta;
 	double a = alpha;
@@ -27,9 +27,9 @@ main() {
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	int i, j, k, n, n1, prncnt, prntstps;
-	double v[chainlngth], x[chainlngth], tke, tpe, te, ke1, omegak[nmode];
+	double v[chainlngth], x[chainlngth], tke, tpe, te;
 	double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
-	double t, t1, dx, hdt, hdt2,  twopi, twopisqr, alphaby4, cmass, cmom;
+	double dx, hdt, hdt2, alphaby4, cmass, cmom;
 	
 	prntstps = (int) (1.0 / dt);
 	gettimeofday(&start, NULL);
@@ -183,7 +183,7 @@ main() {
 	printf("Total time=%f seconds\n", delta);
 }
 
-double accel(double *x, double *acc) {
+void accel(double *x, double *acc) {
 	double dxi, twodxi, dxipl1, dximn1, fac, fac1, fac2, fac13, fac23;
 	int i, j, k;
 	for (i = 0; i < chainlngth; i++) {
