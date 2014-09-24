@@ -5,14 +5,14 @@ CC=gcc
 BIN = breather
 OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
-FLAGS = -std=c99 -Wall -Werror -fpermissive -O3
+FLAGS = -std=c99 -Wall -Werror -O3
 
 #-----------------------------------------------------------------------------
 
 all : $(BIN)
 
 $(BIN) :
-	$(CC) $(FLAGS) -o breather breather.o
+	$(CC) $(FLAGS) -o breather breather.c
 
 clean:
 	$(RM) $(DIRT)
