@@ -36,7 +36,11 @@ int main() {
 	
 	//char *buf=(char *)malloc(sizeof(char)*10000000);
 	//setvbuf(fp1, buf, _IOFBF, sizeof(buf));
+	
 	alphaby4 = beta / 4.0;
+	dx = tke = tpe = te = 0.0;
+	
+	// Open Files for Writing
 	fp = fopen("toten.dat","w");
 	fp1 = fopen("strsh.dat","w");
 	fp3 = fopen("velsh.dat","w");
@@ -52,19 +56,16 @@ int main() {
 		v[a] = 0.0;
 	}
 	
-	/*
-	Initial perturbation at the center of the chain and it is a double particle
-	perturbation (EVEN Parity)
-	*/
+	/* Initial perturbation at the center of the chain and it is a double
+	particle perturbation (EVEN Parity) */
 	x[50] = -0.98;
 	x[51] = +0.98; // Even Parity
 	
-	dx = tke = tpe = te = 0.0;
 	
 	for (int a = 0; a < chainlngth; a++) { 
-		ke[a] = 0.5 * v[a] * v[a];
+		ke[a] = 0.0;
+		printf("%.10f\t", ke[a]);
 		fprintf(fp6,"%.10f\t", ke[a]);
-		tke += ke[a];
 		if (a == 0) {
 			dx = x[a];
 		} else {
@@ -172,7 +173,6 @@ int main() {
 			
 			n1 = 1;
 			n++;
-			//printf("%d\n", i);
 		}
 		n1++;
 	}
