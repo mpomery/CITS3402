@@ -26,7 +26,7 @@ int main() {
 	printf("Beta is :  %lf \n", b);
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
-	int i, j, k, n1, prncnt, prntstps;
+	int j, k, n1, prncnt, prntstps;
 	double v[chainlngth], x[chainlngth], tke, tpe, te;
 	double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
 	double dx, hdt, hdt2, alphaby4, cmass, cmom;
@@ -43,7 +43,6 @@ int main() {
 	fp1 = fopen("strsh.dat","w");
 	fp3 = fopen("velsh.dat","w");
 	fp5 = fopen("cmass.dat","w");
-	fp2 = fopen("restart.dat","w");
 	fp6 = fopen("ke.dat","w");
 	fp7 = fopen("acce.dat","w");
 	fp8 = fopen("pe.dat","w");
@@ -79,14 +78,14 @@ int main() {
 		fprintf(fp8,"%.10f\t", pe[a]);
 		tpe += pe[a];
 	}
+	fprintf(fp6,"\n");
+	
 	dx = -x[chainlngth - 1];
 	fac = dx * dx;
 	pe[chainlngth - 1] = alpha * 0.5 * fac + alphaby4 * fac * fac;
 	fprintf(fp8,"%.10f\n", pe[chainlngth - 1]);
 	tpe += pe[chainlngth - 1];
-	fprintf(fp6,"\n");
 	te = tpe + tke;
-	
 	
 	fprintf(fp,"%d\t%.10f\n", 0, te);
 	
@@ -100,7 +99,6 @@ int main() {
 	fprintf(fp7,"\n"); 
 	
 	///////////////////////////////////////
-	i = 0;
 	
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
@@ -148,16 +146,20 @@ int main() {
 				tpe += temp;
 				cmass += x[j];
 			}
+			fprintf(fp6,"\n");
+			
 			dx = -x[chainlngth - 1];
 			fac = dx * dx;
+			
 			double temp2 = 0;
 			temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			tpe += temp2;
 			
 			fprintf(fp8,"%.10f\n", temp2);
-			tpe += temp2;
+			
 			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
+			
 			cmass /= chainlngth;
-			fprintf(fp6,"\n");
 			te = tpe + tke;
 			
 			fprintf(fp,"%d\t%.10f\n", n, te);
@@ -168,7 +170,6 @@ int main() {
 				fprintf(fp3,"%.10f\t", v[k]); 
 				fprintf(fp7,"%.10f\t", acc[k]); 
 			}
-			
 			fprintf(fp1,"\n"); 
 			fprintf(fp3,"\n"); 
 			fprintf(fp7,"\n"); 
@@ -189,7 +190,8 @@ int main() {
 	fclose(fp7);
 	fclose(fp8);
 	
-	fprintf(fp2, "%d\t%d\n", i-1, nprntstps);
+	fp2 = fopen("restart.dat","w");
+	fprintf(fp2, "%d\t%d\n", -1, nprntstps);
 	for (int b = 0; b < chainlngth; b++) {
 		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[b], v[b], acc[b]);
 	}
