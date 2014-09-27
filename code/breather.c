@@ -117,7 +117,7 @@ int main() {
 		
 		/* new final velocities; Ignore the variables cmom and cmass */
 		cmom = 0.0;
-		for (b = 0; b < chainlngth; b++) {
+		for (int b = 0; b < chainlngth; b++) {
 			v[b] += hdt * acc[b];
 			cmom += v[b];
 		}
