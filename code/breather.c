@@ -32,7 +32,10 @@ int main() {
 	double dx, hdt, hdt2, alphaby4, cmass, cmom;
 	
 	prntstps = (int) (1.0 / dt);
+	
+	// Start Timing
 	gettimeofday(&start, NULL);
+	
 	//char *buf=(char *)malloc(sizeof(char)*10000000);
 	//setvbuf(fp1, buf, _IOFBF, sizeof(buf));
 	alphaby4 = beta / 4.0;
@@ -45,7 +48,6 @@ int main() {
 	fp7 = fopen("acce.dat","w");
 	fp8 = fopen("pe.dat","w");
 	
-	//start=time(NULL);
 	/* Initialize the position, velocity, acceleration arrays */
 	for (int a = 0; a < chainlngth; a++) { 
 		x[a] = 0.0;
@@ -65,7 +67,7 @@ int main() {
 	for (int a = 0; a < chainlngth; a++) { 
 		ke[a] = 0.5 * v[a] * v[a];
 		fprintf(fp6,"%.10f\t", ke[a]);
-		tke += ke[i];
+		tke += ke[a];
 		j = a - 1;
 		if (j == -1) {
 			dx = x[a];
@@ -85,22 +87,20 @@ int main() {
 	fprintf(fp6,"\n");
 	te = tpe + tke;
 	
-	///////////////////////////////////////
-	i = 0;
 	
 	fprintf(fp,"%d\t%.10f\n", 0, te);
 	
-	for (k=0; k < chainlngth; k++)
-		fprintf(fp1,"%.10f\t", x[k]);
+	for (int c = 0; c < chainlngth; c++) {
+		fprintf(fp1,"%.10f\t", x[c]);
+		fprintf(fp3,"%.10f\t", v[c]);
+		fprintf(fp7,"%.10f\t", acc[c]);
+	}
 	fprintf(fp1,"\n"); 
-	
-	for (k=0; k < chainlngth; k++)
-		fprintf(fp3,"%.10f\t", v[k]);
 	fprintf(fp3,"\n");
-	
-	for (k=0; k < chainlngth; k++)
-		fprintf(fp7,"%.10f\t", acc[k]);
 	fprintf(fp7,"\n"); 
+	
+	///////////////////////////////////////
+	i = 0;
 	
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
@@ -174,16 +174,26 @@ int main() {
 		}
 		n1++;
 	}
-	fclose(fp); fclose(fp1); fclose(fp3); fclose(fp5); 
-	fclose(fp6); fclose(fp7); fclose(fp8);
+	
+	// Close Files
+	fclose(fp);
+	fclose(fp1);
+	fclose(fp3);
+	fclose(fp5);
+	fclose(fp6);
+	fclose(fp7);
+	fclose(fp8);
 	
 	fprintf(fp2, "%d\t%d\n", i-1, n-1);
-	for (j = 0; j < chainlngth; j++) 
-		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[j], v[j], acc[j]);
-	fclose(fp2); 
+	for (int b = 0; b < chainlngth; b++) {
+		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[b], v[b], acc[b]);
+	}
+	fclose(fp2);
+	
+	// Time how long the operation took
 	gettimeofday(&end, NULL);
 	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
-	 end.tv_usec - start.tv_usec) / 1.e6;
+	end.tv_usec - start.tv_usec) / 1.e6;
 	printf("Total time=%f seconds\n", delta);
 }
 
