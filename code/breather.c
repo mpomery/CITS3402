@@ -26,7 +26,7 @@ int main() {
 	printf("Beta is :  %lf \n", b);
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
-	int j, k, n1, prncnt, prntstps;
+	int k, n1, prncnt, prntstps;
 	double v[chainlngth], x[chainlngth], tke, tpe, te;
 	double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
 	double dx, hdt, hdt2, alphaby4, cmass, cmom;
@@ -67,11 +67,10 @@ int main() {
 		ke[a] = 0.5 * v[a] * v[a];
 		fprintf(fp6,"%.10f\t", ke[a]);
 		tke += ke[a];
-		j = a - 1;
-		if (j == -1) {
+		if (a == 0) {
 			dx = x[a];
 		} else {
-			dx = x[a] - x[j]; 
+			dx = x[a] - x[a - 1]; 
 		}
 		fac = dx * dx;
 		pe[a] = alpha * 0.5 * fac + alphaby4 * fac * fac;
@@ -108,9 +107,9 @@ int main() {
 		
 		/* new positions and mid-velocities; velocity-Verlet algorithm  */
 		
-		for (j = 0; j < chainlngth; j++) {
-			x[j] += dt * v[j] + hdt2 * acc[j];
-			v[j] += hdt * acc[j];
+		for (int b = 0; b < chainlngth; b++) {
+			x[b] += dt * v[b] + hdt2 * acc[b];
+			v[b] += hdt * acc[b];
 		}
 		
 		/* new accelerations */
@@ -118,9 +117,9 @@ int main() {
 		
 		/* new final velocities; Ignore the variables cmom and cmass */
 		cmom = 0.0;
-		for (j = 0; j < chainlngth; j++) {
-			v[j] += hdt * acc[j];
-			cmom += v[j];
+		for (b = 0; b < chainlngth; b++) {
+			v[b] += hdt * acc[b];
+			cmom += v[b];
 		}
 		cmom /= chainlngth;
 		
@@ -129,22 +128,21 @@ int main() {
 		if (prncnt == 1) { //if 100% done, print all
 			tke = tpe = te = dx = 0.0;  //reset all variables
 			cmass = 0.0;
-			for (j = 0; j < chainlngth; j++) {
-				ke[j] = 0.5 * v[j] * v[j]; 
-				fprintf(fp6,"%.10f\t",ke[j]);
-				tke += ke[j];
-				k = j-1;
-				if (k == -1) {
-					dx = x[j];
+			for (int b = 0; b < chainlngth; b++) {
+				ke[b] = 0.5 * v[b] * v[b]; 
+				fprintf(fp6,"%.10f\t",ke[b]);
+				tke += ke[b];
+				if (b == 0) {
+					dx = x[b];
 				} else {
-					dx = x[j] - x[k];
+					dx = x[b] - x[b - 1];
 				}
 				fac = dx * dx;
 				double temp = 0;
 				temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
 				fprintf(fp8,"%.10f\t", temp);
 				tpe += temp;
-				cmass += x[j];
+				cmass += x[b];
 			}
 			fprintf(fp6,"\n");
 			
