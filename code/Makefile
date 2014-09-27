@@ -9,17 +9,19 @@ FLAGS = -std=c99 -Wall -Werror -O3
 
 #-----------------------------------------------------------------------------
 
-all : $(BIN) test
+all : clean $(BIN) test
 
 $(BIN) :
 	$(CC) $(FLAGS) -o breather breather.c
 
 clean:
 	$(RM) $(DIRT)
+	$(RM) $(BIN)
 
 clobber:
 	$(RM) $(DIRT)
 	$(RM) $(BIN)
+	$(RM) *.dat
 
 test:
 	./breather
