@@ -47,10 +47,10 @@ int main() {
 	
 	//start=time(NULL);
 	/* Initialize the position, velocity, acceleration arrays */
-	for (i=0; i < chainlngth; i++) { 
-		x[i] = 0.0;
-		acc[i] = 0.0;
-		v[i] = 0.0;
+	for (int a = 0; a < chainlngth; a++) { 
+		x[a] = 0.0;
+		acc[a] = 0.0;
+		v[a] = 0.0;
 	}
 	
 	/*
@@ -61,30 +61,34 @@ int main() {
 	x[51] = +0.98; // Even Parity
 	
 	dx = tke = tpe = te = 0.0;
-	for (i=0; i < chainlngth; i++) { 
-		ke[i] = 0.5 * v[i] * v[i];
-		fprintf(fp6,"%.10f\t", ke[i]);
+	
+	for (int a = 0; a < chainlngth; a++) { 
+		ke[a] = 0.5 * v[a] * v[a];
+		fprintf(fp6,"%.10f\t", ke[a]);
 		tke += ke[i];
-		j = i-1;
+		j = a - 1;
 		if (j == -1) {
-			dx = x[i];
+			dx = x[a];
 		} else {
-			dx = x[i] - x[j]; 
+			dx = x[a] - x[j]; 
 		}
 		fac = dx * dx;
-		pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-		fprintf(fp8,"%.10f\t", pe[i]);
-		tpe += pe[i];
+		pe[a] = alpha * 0.5 * fac + alphaby4 * fac * fac;
+		fprintf(fp8,"%.10f\t", pe[a]);
+		tpe += pe[a];
 	}
 	dx = -x[chainlngth - 1];
 	fac = dx * dx;
-	pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
+	pe[chainlngth - 1] = alpha * 0.5 * fac + alphaby4 * fac * fac;
 	fprintf(fp8,"%.10f\n", pe[i]);
-	tpe += pe[i];
+	tpe += pe[chainlngth - 1];
 	fprintf(fp6,"\n");
 	te = tpe + tke;
+	
+	///////////////////////////////////////
 	i = 0;
-	fprintf(fp,"%d\t%.10f\n", i, te);
+	
+	fprintf(fp,"%d\t%.10f\n", 0, te);
 	
 	for (k=0; k < chainlngth; k++)
 		fprintf(fp1,"%.10f\t", x[k]);
