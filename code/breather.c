@@ -80,7 +80,7 @@ int main() {
 	dx = -x[chainlngth - 1];
 	fac = dx * dx;
 	pe[chainlngth - 1] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-	fprintf(fp8,"%.10f\n", pe[i]);
+	fprintf(fp8,"%.10f\n", pe[chainlngth - 1]);
 	tpe += pe[chainlngth - 1];
 	fprintf(fp6,"\n");
 	te = tpe + tke;
@@ -188,11 +188,11 @@ int main() {
 }
 
 void accel(double *x, double *acc) {
-	double dxi, twodxi, dxipl1, dximn1, fac, fac1, fac2, fac13, fac23;
-	int i, j, k;
-	for (i = 0; i < chainlngth; i++) {
-		j = i - 1;
-		k = i + 1;
+	for (int a = 0; a < chainlngth; a++) {
+		int j = a - 1;
+		int k = a + 1;
+		double dximn1 = 0.0;
+		double dxipl1 = 0.0;
 		if (j == -1) {
 			dximn1 = 0.0;
 		} else {
@@ -203,14 +203,14 @@ void accel(double *x, double *acc) {
 		} else {
 			dxipl1 = x[k];
 		}
-		dxi = x[i];
-		twodxi = 2.0 * dxi;
-		fac = dxipl1 + dximn1 - twodxi;
-		fac1 = dxipl1 - dxi;
-		fac2 = dxi - dximn1;
-		fac13 = fac1 * fac1 * fac1;
-		fac23 = fac2 * fac2 * fac2;
-		acc[i] = alpha * fac + beta * (fac13 - fac23);
+		double dxi = x[a];
+		double twodxi = 2.0 * dxi;
+		double fac = dxipl1 + dximn1 - twodxi;
+		double fac1 = dxipl1 - dxi;
+		double fac2 = dxi - dximn1;
+		double fac13 = fac1 * fac1 * fac1;
+		double fac23 = fac2 * fac2 * fac2;
+		acc[a] = alpha * fac + beta * (fac13 - fac23);
 	}
 }
 
