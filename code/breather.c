@@ -26,7 +26,7 @@ int main() {
 	printf("Beta is :  %lf \n", b);
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
-	int i, j, k, n, n1, prncnt, prntstps;
+	int i, j, k, n1, prncnt, prntstps;
 	double v[chainlngth], x[chainlngth], tke, tpe, te;
 	double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
 	double dx, hdt, hdt2, alphaby4, cmass, cmom;
@@ -104,8 +104,8 @@ int main() {
 	
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
-	n = 1; n1 = 1;
-	while (n < nprntstps) {
+	n1 = 1;
+	for (int n = 1; n < nprntstps;) {
 		
 		/* new positions and mid-velocities; velocity-Verlet algorithm  */
 		
@@ -127,7 +127,7 @@ int main() {
 		
 		/* Kinetic energies */
 		prncnt = n1 / prntstps;  //percent completion
-		if (prncnt == 1) {  //if 100% done, print all
+		if (prncnt == 1) { //if 100% done, print all
 			tke = tpe = te = dx = 0.0;  //reset all variables
 			cmass = 0.0;
 			for (j = 0; j < chainlngth; j++) {
@@ -149,28 +149,29 @@ int main() {
 			dx = -x[chainlngth - 1];
 			fac = dx * dx;
 			pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-		
+			
 			fprintf(fp8,"%.10f\n", pe[i]);
 			tpe += pe[i];
 			fprintf(fp5, "%d\t%.10f\n", i, cmass);
 			cmass /= chainlngth;
 			fprintf(fp6,"\n");
 			te = tpe + tke;
+			
 			fprintf(fp,"%d\t%.10f\n", n, te);
+			
 			for (k=0; k < chainlngth; k++) {
 				y[k] = x[k] - cmass;
 				fprintf(fp1,"%.10f\t", y[k]); 
-			}
-			fprintf(fp1,"\n"); 
-			for (k=0; k < chainlngth; k++) {
 				fprintf(fp3,"%.10f\t", v[k]); 
-			}
-			fprintf(fp3,"\n"); 
-			for (k=0; k < chainlngth; k++) {
 				fprintf(fp7,"%.10f\t", acc[k]); 
 			}
+			
+			fprintf(fp1,"\n"); 
+			fprintf(fp3,"\n"); 
 			fprintf(fp7,"\n"); 
-			n++; n1 = 1;
+			
+			n1 = 1;
+			n++;
 		}
 		n1++;
 	}
@@ -184,7 +185,7 @@ int main() {
 	fclose(fp7);
 	fclose(fp8);
 	
-	fprintf(fp2, "%d\t%d\n", i-1, n-1);
+	fprintf(fp2, "%d\t%d\n", i-1, nprntstps);
 	for (int b = 0; b < chainlngth; b++) {
 		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[b], v[b], acc[b]);
 	}
@@ -223,5 +224,4 @@ void accel(double *x, double *acc) {
 		acc[a] = alpha * fac + beta * (fac13 - fac23);
 	}
 }
-
 
