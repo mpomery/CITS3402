@@ -107,6 +107,7 @@ int main() {
 	n1 = 1;
 	for (int n = 1; n < nprntstps;) {
 		
+		
 		/* new positions and mid-velocities; velocity-Verlet algorithm  */
 		
 		for (j = 0; j < chainlngth; j++) {
@@ -141,18 +142,20 @@ int main() {
 					dx = x[j] - x[k];
 				}
 				fac = dx * dx;
-				pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-				fprintf(fp8,"%.10f\t", pe[i]);
-				tpe += pe[i];
+				double temp = 0;
+				temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
+				fprintf(fp8,"%.10f\t", temp);
+				tpe += temp;
 				cmass += x[j];
 			}
 			dx = -x[chainlngth - 1];
 			fac = dx * dx;
-			pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			double temp2 = 0;
+			temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
 			
-			fprintf(fp8,"%.10f\n", pe[i]);
-			tpe += pe[i];
-			fprintf(fp5, "%d\t%.10f\n", i, cmass);
+			fprintf(fp8,"%.10f\n", temp2);
+			tpe += temp2;
+			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
 			cmass /= chainlngth;
 			fprintf(fp6,"\n");
 			te = tpe + tke;
@@ -172,6 +175,7 @@ int main() {
 			
 			n1 = 1;
 			n++;
+			//printf("%d\n", i);
 		}
 		n1++;
 	}
