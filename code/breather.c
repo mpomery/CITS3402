@@ -22,7 +22,7 @@ int main() {
 	double delta;
 	double a = alpha;
 	double b = beta;
-	printf("Alpha is:  %lf \n",  a);
+	printf("Alpha is:  %lf \n", a);
 	printf("Beta is :  %lf \n", b);
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
