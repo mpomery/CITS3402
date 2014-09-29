@@ -23,6 +23,9 @@ int main() {
 	printf("Alpha is:  %lf \n", alpha);
 	printf("Beta is :  %lf \n", beta);
 	
+	#pragma omp parallel
+		printf("Hello, world.\n");
+	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	int k, n1, prncnt, prntstps;
 	double v[chainlngth], x[chainlngth], tke, tpe, te;
@@ -64,7 +67,6 @@ int main() {
 	
 	for (int a = 0; a < chainlngth; a++) { 
 		ke[a] = 0.0;
-		printf("%.10f\t", ke[a]);
 		fprintf(fp6,"%.10f\t", ke[a]);
 		if (a == 0) {
 			dx = x[a];
