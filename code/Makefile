@@ -25,11 +25,11 @@ clobber:
 
 test:
 	./breather
-	diff acce.dat orig/acce.dat
-	diff cmass.dat orig/cmass.dat
-	diff ke.dat orig/ke.dat
-	diff pe.dat orig/pe.dat
-	diff restart.dat orig/restart.dat
-	diff strsh.dat orig/strsh.dat
-	diff toten.dat orig/toten.dat
-	diff velsh.dat orig/velsh.dat
+	diff acce.dat orig/acce.dat | wc -l
+	diff cmass.dat orig/cmass.dat | wc -l
+	diff ke.dat orig/ke.dat | wc -l
+	diff pe.dat orig/pe.dat | wc -l
+	diff restart.dat orig/restart.dat | wc -l
+	diff strsh.dat orig/strsh.dat | wc -l
+	diff toten.dat orig/toten.dat | wc -l
+	diff velsh.dat orig/velsh.dat | wc -l
