@@ -104,10 +104,7 @@ int main() {
 	hdt2 = dt * hdt;
 	n1 = 1;
 	for (int n = 1; n < nprntstps;) {
-		
-		
 		/* new positions and mid-velocities; velocity-Verlet algorithm  */
-		
 		for (int b = 0; b < chainlngth; b++) {
 			x[b] += dt * v[b] + hdt2 * acc[b];
 			v[b] += hdt * acc[b];
@@ -202,19 +199,13 @@ int main() {
 
 void accel(double *x, double *acc) {
 	for (int a = 0; a < chainlngth; a++) {
-		int j = a - 1;
-		int k = a + 1;
 		double dximn1 = 0.0;
 		double dxipl1 = 0.0;
-		if (j == -1) {
-			dximn1 = 0.0;
-		} else {
-			dximn1 = x[j];
+		if (a != 0) {
+			dximn1 = x[a - 1];
 		}
-		if (k == chainlngth) {
-			dxipl1 = 0.0;
-		} else {
-			dxipl1 = x[k];
+		if (a + 1 != chainlngth) {
+			dxipl1 = x[a + 1];
 		}
 		double dxi = x[a];
 		double twodxi = 2.0 * dxi;
