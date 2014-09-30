@@ -72,7 +72,7 @@ int main() {
 		} else {
 			dx = x[a] - x[a - 1]; 
 		}
-		int fac = dx * dx;
+		double fac = dx * dx;
 		pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 		fprintf(fp8,"%.10f\t", pe);
 		tpe += pe;
@@ -84,7 +84,7 @@ int main() {
 	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 	fprintf(fp8,"%.10f\n", pe);
 	tpe += pe;
-	printf("tke: %.10f", tke);
+	//printf("tke: %.10f", tke);
 	te = tpe + tke;
 	
 	fprintf(fp,"%d\t%.10f\n", 0, te);
@@ -134,7 +134,7 @@ int main() {
 				} else {
 					dx = x[b] - x[b - 1];
 				}
-				int fac = dx * dx;
+				double fac = dx * dx;
 				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
 				fprintf(fp8,"%.10f\t", temp);
 				tpe += temp;
@@ -143,7 +143,7 @@ int main() {
 			fprintf(fp6,"\n");
 			
 			dx = -x[chainlngth - 1];
-			int fac = dx * dx;
+			double fac = dx * dx;
 			
 			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
 			tpe += temp2;
@@ -198,7 +198,9 @@ int main() {
 }
 
 void accel(double *x, double *acc) {
-	// Not worth parallizing this code, slows it` down
+	// Not worth parallizing this code, slows it down
+	// Making it run in parallel properly might help
+	#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) {
 		double dximn1 = 0.0;
 		double dxipl1 = 0.0;
