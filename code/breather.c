@@ -79,7 +79,7 @@ int main() {
 	}
 	fprintf(fp6,"\n");
 	
-	dx = x[chainlngth - 1];
+	dx = -x[chainlngth - 1];
 	fac = dx * dx;
 	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 	fprintf(fp8,"%.10f\n", pe);
@@ -142,8 +142,7 @@ int main() {
 			}
 			fprintf(fp6,"\n");
 			
-			// No need for a negative sign if we always math it away
-			dx = x[chainlngth - 1];
+			dx = -x[chainlngth - 1];
 			int fac = dx * dx;
 			
 			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
