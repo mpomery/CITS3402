@@ -50,7 +50,6 @@ int main() {
 	fp8 = fopen("pe.dat","w");
 	
 	/* Initialize the position, velocity, acceleration arrays */
-	#pragma omp parallel
 	for (int a = 0; a < chainlngth; a++) { 
 		x[a] = 0.0;
 		acc[a] = 0.0;
@@ -101,6 +100,7 @@ int main() {
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
 	n1 = 1;
+	#pragma omp parallel for
 	for (int n = 1; n < nprntstps;) {
 		/* new positions and mid-velocities; velocity-Verlet algorithm  */
 		for (int b = 0; b < chainlngth; b++) {
@@ -197,7 +197,7 @@ int main() {
 }
 
 void accel(double *x, double *acc) {
-	#pragma omp parallel
+	// Not worth parallizing this code, slows it` down
 	for (int a = 0; a < chainlngth; a++) {
 		double dximn1 = 0.0;
 		double dxipl1 = 0.0;
