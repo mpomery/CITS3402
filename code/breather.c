@@ -18,18 +18,20 @@
 void accel(double *, double *);
 
 int main() {
+	// Used for timing
 	struct timeval start, end;
-	double delta;
+	// Output our alpha and beta values
 	printf("Alpha is:  %lf \n", alpha);
 	printf("Beta is :  %lf \n", beta);
 	
+	// File Pointers!
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
-	int n1, prncnt, prntstps;
+	
 	double v[chainlngth], x[chainlngth], tke, tpe, te;
 	double acc[chainlngth], ke[chainlngth], pe, fac, y[chainlngth];
 	double dx, hdt, hdt2, alphaby4, cmass, cmom;
 	
-	prntstps = (int) (1.0 / dt);
+	int prntstps = (int) (1.0 / dt);
 	
 	// Start Timing
 	gettimeofday(&start, NULL);
@@ -70,18 +72,19 @@ int main() {
 		} else {
 			dx = x[a] - x[a - 1]; 
 		}
-		fac = dx * dx;
+		int fac = dx * dx;
 		pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 		fprintf(fp8,"%.10f\t", pe);
 		tpe += pe;
 	}
 	fprintf(fp6,"\n");
 	
-	dx = -x[chainlngth - 1];
+	dx = x[chainlngth - 1];
 	fac = dx * dx;
 	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 	fprintf(fp8,"%.10f\n", pe);
 	tpe += pe;
+	printf("tke: %.10f", tke);
 	te = tpe + tke;
 	
 	fprintf(fp,"%d\t%.10f\n", 0, te);
@@ -95,12 +98,10 @@ int main() {
 	fprintf(fp3,"\n");
 	fprintf(fp7,"\n"); 
 	
-	///////////////////////////////////////
-	
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
+	int n1, prncnt;
 	n1 = 1;
-	#pragma omp parallel for
 	for (int n = 1; n < nprntstps;) {
 		/* new positions and mid-velocities; velocity-Verlet algorithm  */
 		for (int b = 0; b < chainlngth; b++) {
@@ -133,7 +134,7 @@ int main() {
 				} else {
 					dx = x[b] - x[b - 1];
 				}
-				fac = dx * dx;
+				int fac = dx * dx;
 				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
 				fprintf(fp8,"%.10f\t", temp);
 				tpe += temp;
@@ -141,8 +142,9 @@ int main() {
 			}
 			fprintf(fp6,"\n");
 			
-			dx = -x[chainlngth - 1];
-			fac = dx * dx;
+			// No need for a negative sign if we always math it away
+			dx = x[chainlngth - 1];
+			int fac = dx * dx;
 			
 			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
 			tpe += temp2;
@@ -191,7 +193,7 @@ int main() {
 	
 	// Time how long the operation took
 	gettimeofday(&end, NULL);
-	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+	double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
 	end.tv_usec - start.tv_usec) / 1.e6;
 	printf("Total time=%f seconds\n", delta);
 }
