@@ -26,7 +26,7 @@ int main() {
 	//#pragma omp parallel
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
-	int k, n1, prncnt, prntstps;
+	int n1, prncnt, prntstps;
 	double v[chainlngth], x[chainlngth], tke, tpe, te;
 	double acc[chainlngth], ke[chainlngth], pe, fac, y[chainlngth];
 	double dx, hdt, hdt2, alphaby4, cmass, cmom;
@@ -139,8 +139,7 @@ int main() {
 					dx = x[b] - x[b - 1];
 				}
 				fac = dx * dx;
-				double temp = 0;
-				temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
+				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
 				fprintf(fp8,"%.10f\t", temp);
 				tpe += temp;
 				cmass += x[b];
@@ -150,8 +149,7 @@ int main() {
 			dx = -x[chainlngth - 1];
 			fac = dx * dx;
 			
-			double temp2 = 0;
-			temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
 			tpe += temp2;
 			
 			fprintf(fp8,"%.10f\n", temp2);
@@ -163,11 +161,11 @@ int main() {
 			
 			fprintf(fp,"%d\t%.10f\n", n, te);
 			
-			for (k=0; k < chainlngth; k++) {
-				y[k] = x[k] - cmass;
-				fprintf(fp1,"%.10f\t", y[k]); 
-				fprintf(fp3,"%.10f\t", v[k]); 
-				fprintf(fp7,"%.10f\t", acc[k]); 
+			for (int b = 0; b < chainlngth; b++) {
+				y[b] = x[b] - cmass;
+				fprintf(fp1,"%.10f\t", y[b]); 
+				fprintf(fp3,"%.10f\t", v[b]); 
+				fprintf(fp7,"%.10f\t", acc[b]); 
 			}
 			fprintf(fp1,"\n"); 
 			fprintf(fp3,"\n"); 
