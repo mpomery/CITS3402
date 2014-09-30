@@ -24,12 +24,11 @@ int main() {
 	printf("Beta is :  %lf \n", beta);
 	
 	#pragma omp parallel
-		printf("Hello, world.\n");
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	int k, n1, prncnt, prntstps;
 	double v[chainlngth], x[chainlngth], tke, tpe, te;
-	double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
+	double acc[chainlngth], ke[chainlngth], pe, fac, y[chainlngth];
 	double dx, hdt, hdt2, alphaby4, cmass, cmom;
 	
 	prntstps = (int) (1.0 / dt);
@@ -53,6 +52,7 @@ int main() {
 	fp8 = fopen("pe.dat","w");
 	
 	/* Initialize the position, velocity, acceleration arrays */
+	#pragma omp parallel
 	for (int a = 0; a < chainlngth; a++) { 
 		x[a] = 0.0;
 		acc[a] = 0.0;
@@ -74,17 +74,17 @@ int main() {
 			dx = x[a] - x[a - 1]; 
 		}
 		fac = dx * dx;
-		pe[a] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-		fprintf(fp8,"%.10f\t", pe[a]);
-		tpe += pe[a];
+		pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
+		fprintf(fp8,"%.10f\t", pe);
+		tpe += pe;
 	}
 	fprintf(fp6,"\n");
 	
 	dx = -x[chainlngth - 1];
 	fac = dx * dx;
-	pe[chainlngth - 1] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-	fprintf(fp8,"%.10f\n", pe[chainlngth - 1]);
-	tpe += pe[chainlngth - 1];
+	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
+	fprintf(fp8,"%.10f\n", pe);
+	tpe += pe;
 	te = tpe + tke;
 	
 	fprintf(fp,"%d\t%.10f\n", 0, te);
