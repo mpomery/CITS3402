@@ -23,7 +23,7 @@ int main() {
 	printf("Alpha is:  %lf \n", alpha);
 	printf("Beta is :  %lf \n", beta);
 	
-	#pragma omp parallel
+	//#pragma omp parallel
 	
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	int k, n1, prncnt, prntstps;
