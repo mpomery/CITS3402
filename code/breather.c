@@ -184,7 +184,7 @@ int main() {
 	fclose(fp8);
 	
 	fp2 = fopen("restart.dat","w");
-	fprintf(fp2, "%d\t%d\n", -1, nprntstps);
+	fprintf(fp2, "%d\t%d\n", -1, nprntstps - 1);
 	for (int b = 0; b < chainlngth; b++) {
 		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[b], v[b], acc[b]);
 	}
