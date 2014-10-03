@@ -168,8 +168,8 @@ int main() {
 			fprintf(fp7,"\n"); 
 			
 			n1 = 1;
+			//printf("%d/%d\n", n, nprntstps);
 			n++;
-			printf("%d/%d\n", n, nprntstps);
 		}
 		n1++;
 	}
