@@ -15,7 +15,7 @@
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
 
-void accel(long double *, long double *);
+void accel(double *, double *);
 
 int main() {
 	// Used for timing
@@ -27,9 +27,9 @@ int main() {
 	// File Pointers!
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	
-	long double v[chainlngth], x[chainlngth], te;
-	long double acc[chainlngth], ke[chainlngth], pe, y[chainlngth];
-	long double hdt, hdt2, alphaby4, cmass;
+	double v[chainlngth], x[chainlngth], te;
+	double acc[chainlngth], ke[chainlngth], pe, y[chainlngth];
+	double hdt, hdt2, alphaby4, cmass;
 	
 	int prntstps = (int) (1.0 / dt);
 	
@@ -75,7 +75,7 @@ int main() {
 	x[50] = -0.98;
 	x[51] = +0.98; // Even Parity
 	
-	long double dx = 0.0;
+	double dx = 0.0;
 	
 	for (int a = 0; a < chainlngth; a++) { 
 		ke[a] = 0.0;
@@ -85,7 +85,7 @@ int main() {
 		} else {
 			dx = x[a] - x[a - 1]; 
 		}
-		long double fac = dx * dx;
+		double fac = dx * dx;
 		pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 		fprintf(fp8,"%.10f\t", pe);
 		te += pe;
@@ -93,7 +93,7 @@ int main() {
 	fprintf(fp6,"\n");
 	
 	dx = -x[chainlngth - 1];
-	long double fac = dx * dx;
+	double fac = dx * dx;
 	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 	fprintf(fp8,"%.10f\n", pe);
 	te += pe;
@@ -130,7 +130,7 @@ int main() {
 		/* Kinetic energies */
 		//prncnt = n1 / prntstps;  //percent completion
 		//if (prncnt == 1) { //if 100% done, print all
-			long double te = dx = 0.0;  //reset all variables
+			double te = dx = 0.0;  //reset all variables
 			cmass = 0.0;
 			for (int b = 0; b < chainlngth; b++) {
 				ke[b] = 0.5 * v[b] * v[b]; 
@@ -141,8 +141,8 @@ int main() {
 				} else {
 					dx = x[b] - x[b - 1];
 				}
-				long double fac = dx * dx;
-				long double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
+				double fac = dx * dx;
+				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
 				fprintf(fp8,"%.10f\t", temp);
 				te += temp;
 				cmass += x[b];
@@ -150,9 +150,9 @@ int main() {
 			fprintf(fp6,"\n");
 			
 			dx = -x[chainlngth - 1];
-			long double fac = dx * dx;
+			double fac = dx * dx;
 			
-			long double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
 			te += temp2;
 			
 			fprintf(fp8,"%.10f\n", temp2);
@@ -197,32 +197,32 @@ int main() {
 	
 	// Time how long the operation took
 	gettimeofday(&end, NULL);
-	long double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+	double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
 	end.tv_usec - start.tv_usec) / 1.e6;
 	printf("Total time=%f seconds\n", delta);
 }
 
-void accel(long double *x, long double *acc) {
+void accel(double *x, double *acc) {
 	// Not worth parallizing this code, slows it down
 	// Making it run in parallel properly might help
 	// Nope. This in parallel doubles run time
 	#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) {
-		long double dximn1 = 0.0;
-		long double dxipl1 = 0.0;
+		double dximn1 = 0.0;
+		double dxipl1 = 0.0;
 		if (a != 0) {
 			dximn1 = x[a - 1];
 		}
 		if (a + 1 != chainlngth) {
 			dxipl1 = x[a + 1];
 		}
-		long double dxi = x[a];
-		long double twodxi = 2.0 * dxi;
-		long double fac = dxipl1 + dximn1 - twodxi;
-		long double fac1 = dxipl1 - dxi;
-		long double fac2 = dxi - dximn1;
-		long double fac13 = fac1 * fac1 * fac1;
-		long double fac23 = fac2 * fac2 * fac2;
+		double dxi = x[a];
+		double twodxi = 2.0 * dxi;
+		double fac = dxipl1 + dximn1 - twodxi;
+		double fac1 = dxipl1 - dxi;
+		double fac2 = dxi - dximn1;
+		double fac13 = fac1 * fac1 * fac1;
+		double fac23 = fac2 * fac2 * fac2;
 		acc[a] = alpha * fac + beta * (fac13 - fac23);
 	}
 }
