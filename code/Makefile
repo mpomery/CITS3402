@@ -5,9 +5,8 @@ CC=gcc
 BIN = breather
 OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
-FLAGS = -std=c99 -Wall -Werror
-FLAGS2 = -std=c99
-FLAGS3 = -std=c99 -Wall -Werror -fopenmp
+FLAGS = -std=c99 -Wall -Werror -fopenmp -O1
+FLAGS2 = -std=c99 -O1
 COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
@@ -18,11 +17,8 @@ original:
 	cd orig;\
 	$(CC) $(FLAGS2) -o breather breather.c;\
 
-new:
-	$(CC) $(FLAGS) -o breather breather.c
-
 parallel:
-	$(CC) $(FLAGS3) -o breather breather.c
+	$(CC) $(FLAGS) -o breather breather.c
 
 clean:
 	$(RM) $(DIRT)
