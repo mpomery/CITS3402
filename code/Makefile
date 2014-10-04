@@ -12,7 +12,7 @@ COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
 
-all : clean new parallel original test
+all : clean parallel original test
 
 original:
 	cd orig;\
