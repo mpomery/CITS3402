@@ -5,8 +5,8 @@ CC=gcc
 BIN = breather
 OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
-FLAGS = -std=c99 -Wall -Werror -O3 -fopenmp
-FLAGS2 = -std=c99 -O3 -fopenmp
+FLAGS = -std=c99 -Wall -Werror -fopenmp
+FLAGS2 = -std=c99 -fopenmp
 COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
