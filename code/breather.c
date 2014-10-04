@@ -102,8 +102,8 @@ int main() {
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
 	//int n1, prncnt;
-	n1 = 0;
-	for (int n = 1; n < nprntstps;) {
+	//n1 = 0;
+	for (int n = 1; n < nprntstps; n++) {
 		for (int n1 = 0; n1 <= prntstps; n1++) {
 			/* new positions and mid-velocities; velocity-Verlet algorithm  */
 			for (int b = 0; b < chainlngth; b++) {
@@ -125,7 +125,7 @@ int main() {
 		}
 		/* Kinetic energies */
 		//prncnt = n1 / prntstps;  //percent completion
-		if (prncnt == 1) { //if 100% done, print all
+		//if (prncnt == 1) { //if 100% done, print all
 			tke = tpe = te = dx = 0.0;  //reset all variables
 			cmass = 0.0;
 			for (int b = 0; b < chainlngth; b++) {
@@ -170,10 +170,10 @@ int main() {
 			fprintf(fp3,"\n"); 
 			fprintf(fp7,"\n"); 
 			
-			n1 = 1;
+			//n1 = 1;
 			//printf("%d/%d\n", n, nprntstps);
-			n++;
-		}
+			//n++;
+		//}
 	}
 	
 	// Close Files
