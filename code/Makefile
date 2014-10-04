@@ -11,6 +11,12 @@ FLAGS = -std=c99 -Wall -Werror -O3 -fopenmp
 
 all : clean $(BIN) test
 
+original:
+	cd orig
+	$(CC) $(FLAGS) -o breather breather.c
+	./breather
+	cd ../
+
 $(BIN) :
 	$(CC) $(FLAGS) -o breather breather.c
 
