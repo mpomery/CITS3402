@@ -27,9 +27,9 @@ int main() {
 	// File Pointers!
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	
-	double v[chainlngth], x[chainlngth], tke, tpe, te;
-	double acc[chainlngth], ke[chainlngth], pe, fac, y[chainlngth];
-	double dx, hdt, hdt2, alphaby4, cmass, cmom;
+	double v[chainlngth], x[chainlngth], te;
+	double acc[chainlngth], ke[chainlngth], pe, y[chainlngth];
+	double hdt, hdt2, alphaby4, cmass;
 	
 	int prntstps = (int) (1.0 / dt);
 	
@@ -40,7 +40,10 @@ int main() {
 	//setvbuf(fp1, buf, _IOFBF, sizeof(buf));
 	
 	alphaby4 = beta / 4.0;
-	dx = tke = tpe = te = 0.0;
+	hdt = 0.5 * dt;
+	hdt2 = dt * hdt;
+	
+	te = 0.0;
 	
 	// Open Files for Writing
 	fp = fopen("toten.dat","w");
@@ -64,6 +67,7 @@ int main() {
 	x[50] = -0.98;
 	x[51] = +0.98; // Even Parity
 	
+	double dx = 0.0;
 	
 	for (int a = 0; a < chainlngth; a++) { 
 		ke[a] = 0.0;
@@ -76,17 +80,15 @@ int main() {
 		double fac = dx * dx;
 		pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 		fprintf(fp8,"%.10f\t", pe);
-		tpe += pe;
+		te += pe;
 	}
 	fprintf(fp6,"\n");
 	
 	dx = -x[chainlngth - 1];
-	fac = dx * dx;
+	double fac = dx * dx;
 	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
 	fprintf(fp8,"%.10f\n", pe);
-	tpe += pe;
-	//printf("tke: %.10f", tke);
-	te = tpe + tke;
+	te += pe;
 	
 	fprintf(fp,"%d\t%.10f\n", 0, te);
 	
@@ -99,8 +101,6 @@ int main() {
 	fprintf(fp3,"\n");
 	fprintf(fp7,"\n"); 
 	
-	hdt = 0.5 * dt;
-	hdt2 = dt * hdt;
 	//int n1, prncnt;
 	//n1 = 0;
 	for (int n = 1; n < nprntstps; n++) {
@@ -109,30 +109,25 @@ int main() {
 			/* new positions and mid-velocities; velocity-Verlet algorithm  */
 			for (int b = 0; b < chainlngth; b++) {
 				x[b] += dt * v[b] + hdt2 * acc[b];
-				v[b] += hdt * acc[b];
 			}
 			
 			/* new accelerations */
 			accel(x, acc);
 			
-			/* new final velocities; Ignore the variables cmom and cmass */
-			cmom = 0.0;
+			/* new final velocities */
 			for (int b = 0; b < chainlngth; b++) {
 				v[b] += hdt * acc[b];
-				cmom += v[b];
 			}
-			cmom /= chainlngth;
-			//n1++;
 		}
 		/* Kinetic energies */
 		//prncnt = n1 / prntstps;  //percent completion
 		//if (prncnt == 1) { //if 100% done, print all
-			tke = tpe = te = dx = 0.0;  //reset all variables
+			double te = dx = 0.0;  //reset all variables
 			cmass = 0.0;
 			for (int b = 0; b < chainlngth; b++) {
 				ke[b] = 0.5 * v[b] * v[b]; 
 				fprintf(fp6,"%.10f\t",ke[b]);
-				tke += ke[b];
+				te += ke[b];
 				if (b == 0) {
 					dx = x[b];
 				} else {
@@ -141,7 +136,7 @@ int main() {
 				double fac = dx * dx;
 				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
 				fprintf(fp8,"%.10f\t", temp);
-				tpe += temp;
+				te += temp;
 				cmass += x[b];
 			}
 			fprintf(fp6,"\n");
@@ -150,14 +145,13 @@ int main() {
 			double fac = dx * dx;
 			
 			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
-			tpe += temp2;
+			te += temp2;
 			
 			fprintf(fp8,"%.10f\n", temp2);
 			
 			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
 			
 			cmass /= chainlngth;
-			te = tpe + tke;
 			
 			fprintf(fp,"%d\t%.10f\n", n, te);
 			
