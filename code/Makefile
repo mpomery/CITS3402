@@ -5,17 +5,17 @@ CC=gcc
 BIN = breather
 OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
-FLAGS = -std=c99 -Wall -Werror -O3 -fopenmp
+FLAGS = -std=c99 -O3 -fopenmp
 
 #-----------------------------------------------------------------------------
 
 all : clean $(BIN) test
 
 original:
-	cd orig
-	$(CC) $(FLAGS) -o breather breather.c
+	cd orig;\
+	ls;\
+	$(CC) $(FLAGS) -o breather breather.c;\
 	./breather
-	cd ../
 
 $(BIN) :
 	$(CC) $(FLAGS) -o breather breather.c
