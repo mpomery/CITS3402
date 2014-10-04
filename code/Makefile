@@ -33,8 +33,7 @@ clobber:
 
 test:
 	time ./breather
-	cd orig;\
-	time ./breather
+	time ./orig/breather
 	diff acce.dat orig/acce.dat $(COUNT)
 	diff cmass.dat orig/cmass.dat $(COUNT)
 	diff ke.dat orig/ke.dat $(COUNT)
