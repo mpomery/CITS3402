@@ -104,6 +104,7 @@ int main() {
 	//int n1, prncnt;
 	//n1 = 0;
 	for (int n = 1; n < nprntstps; n++) {
+		#pragma omp parallel for
 		for (int n1 = 1; n1 / prntstps != 1; n1++) {
 			/* new positions and mid-velocities; velocity-Verlet algorithm  */
 			for (int b = 0; b < chainlngth; b++) {
