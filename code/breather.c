@@ -52,7 +52,6 @@ int main() {
 	fp8 = fopen("pe.dat","w");
 	
 	/* Initialize the position, velocity, acceleration arrays */
-	//#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) { 
 		x[a] = 0.0;
 		acc[a] = 0.0;
@@ -101,78 +100,68 @@ int main() {
 	
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
-	int n1, prncnt;
-	n1 = 1;
-	for (int n = 1; n < nprntstps;) {
-		/* new positions and mid-velocities; velocity-Verlet algorithm  */
-		for (int b = 0; b < chainlngth; b++) {
-			x[b] += dt * v[b] + hdt2 * acc[b];
-			v[b] += hdt * acc[b];
-		}
-		
-		/* new accelerations */
-		accel(x, acc);
-		
-		/* new final velocities; Ignore the variables cmom and cmass */
-		cmom = 0.0;
-		for (int b = 0; b < chainlngth; b++) {
-			v[b] += hdt * acc[b];
-			cmom += v[b];
-		}
-		cmom /= chainlngth;
-		
-		/* Kinetic energies */
-		prncnt = n1 / prntstps;  //percent completion
-		if (prncnt == 1) { //if 100% done, print all
-			tke = tpe = te = dx = 0.0;  //reset all variables
-			cmass = 0.0;
+	for (int n = 1; n < nprntstps; n++) {
+		for (int n1 = 1; n1 < prntstps; n1++) {
 			for (int b = 0; b < chainlngth; b++) {
-				ke[b] = 0.5 * v[b] * v[b]; 
-				fprintf(fp6,"%.10f\t",ke[b]);
-				tke += ke[b];
-				if (b == 0) {
-					dx = x[b];
-				} else {
-					dx = x[b] - x[b - 1];
-				}
-				double fac = dx * dx;
-				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
-				fprintf(fp8,"%.10f\t", temp);
-				tpe += temp;
-				cmass += x[b];
+				x[b] += dt * v[b] + hdt2 * acc[b];
+				v[b] += hdt * acc[b];
 			}
-			fprintf(fp6,"\n");
 			
-			dx = -x[chainlngth - 1];
+			/* new accelerations */
+			accel(x, acc);
+			
+			/* new final velocities; Ignore the variables cmom and cmass */
+			cmom = 0.0;
+			for (int b = 0; b < chainlngth; b++) {
+				v[b] += hdt * acc[b];
+				cmom += v[b];
+			}
+			cmom /= chainlngth;
+		}
+		tke = tpe = te = dx = 0.0;  //reset all variables
+		cmass = 0.0;
+		for (int b = 0; b < chainlngth; b++) {
+			ke[b] = 0.5 * v[b] * v[b]; 
+			fprintf(fp6,"%.10f\t",ke[b]);
+			tke += ke[b];
+			if (b == 0) {
+				dx = x[b];
+			} else {
+				dx = x[b] - x[b - 1];
+			}
 			double fac = dx * dx;
-			
-			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
-			tpe += temp2;
-			
-			fprintf(fp8,"%.10f\n", temp2);
-			
-			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
-			
-			cmass /= chainlngth;
-			te = tpe + tke;
-			
-			fprintf(fp,"%d\t%.10f\n", n, te);
-			
-			for (int b = 0; b < chainlngth; b++) {
-				y[b] = x[b] - cmass;
-				fprintf(fp1,"%.10f\t", y[b]); 
-				fprintf(fp3,"%.10f\t", v[b]); 
-				fprintf(fp7,"%.10f\t", acc[b]); 
-			}
-			fprintf(fp1,"\n"); 
-			fprintf(fp3,"\n"); 
-			fprintf(fp7,"\n"); 
-			
-			n1 = 1;
-			//printf("%d/%d\n", n, nprntstps);
-			n++;
+			double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			fprintf(fp8,"%.10f\t", temp);
+			tpe += temp;
+			cmass += x[b];
 		}
-		n1++;
+		fprintf(fp6,"\n");
+		
+		dx = -x[chainlngth - 1];
+		double fac = dx * dx;
+		
+		double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
+		tpe += temp2;
+		
+		fprintf(fp8,"%.10f\n", temp2);
+		
+		fprintf(fp5, "%d\t%.10f\n", 0, cmass);
+		
+		cmass /= chainlngth;
+		te = tpe + tke;
+		
+		fprintf(fp,"%d\t%.10f\n", n, te);
+		
+		for (int b = 0; b < chainlngth; b++) {
+			y[b] = x[b] - cmass;
+			fprintf(fp1,"%.10f\t", y[b]); 
+			fprintf(fp3,"%.10f\t", v[b]); 
+			fprintf(fp7,"%.10f\t", acc[b]); 
+		}
+		fprintf(fp1,"\n"); 
+		fprintf(fp3,"\n"); 
+		fprintf(fp7,"\n"); 
+	
 	}
 	
 	// Close Files
