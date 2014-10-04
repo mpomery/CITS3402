@@ -197,7 +197,7 @@ int main() {
 	
 	// Time how long the operation took
 	gettimeofday(&end, NULL);
-	long double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+	double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
 	end.tv_usec - start.tv_usec) / 1.e6;
 	printf("Total time=%f seconds\n", delta);
 }
