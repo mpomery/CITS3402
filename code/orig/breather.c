@@ -6,7 +6,7 @@
 #include <math.h>
 #include <sys/time.h>
 
-#define chainlngth 100
+#define chainlngth 500
 #define nsprngs (chainlngth+1)
 #define halfchain 50 /* Ignore; not used here */
 #define nmode 100  /* Ignore; not used here */
