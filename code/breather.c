@@ -79,7 +79,7 @@ int main() {
 	
 	for (int a = 0; a < chainlngth; a++) { 
 		ke[a] = 0.0;
-		fprintf(fp6,"%.10lf\t", ke[a]);
+		fprintf(fp6,"%.10f\t", ke[a]);
 		if (a == 0) {
 			dx = x[a];
 		} else {
@@ -87,7 +87,7 @@ int main() {
 		}
 		long double fac = dx * dx;
 		pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
-		fprintf(fp8,"%.10lf\t", pe);
+		fprintf(fp8,"%.10f\t", pe);
 		te += pe;
 	}
 	fprintf(fp6,"\n");
@@ -95,15 +95,15 @@ int main() {
 	dx = -x[chainlngth - 1];
 	long double fac = dx * dx;
 	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
-	fprintf(fp8,"%.10lf\n", pe);
+	fprintf(fp8,"%.10f\n", pe);
 	te += pe;
 	
-	fprintf(fp,"%d\t%.10lf\n", 0, te);
+	fprintf(fp,"%d\t%.10f\n", 0, te);
 	
 	for (int c = 0; c < chainlngth; c++) {
-		fprintf(fp1,"%.10lf\t", x[c]);
-		fprintf(fp3,"%.10lf\t", v[c]);
-		fprintf(fp7,"%.10lf\t", acc[c]);
+		fprintf(fp1,"%.10f\t", x[c]);
+		fprintf(fp3,"%.10f\t", v[c]);
+		fprintf(fp7,"%.10f\t", acc[c]);
 	}
 	fprintf(fp1,"\n"); 
 	fprintf(fp3,"\n");
@@ -134,7 +134,7 @@ int main() {
 			cmass = 0.0;
 			for (int b = 0; b < chainlngth; b++) {
 				ke[b] = 0.5 * v[b] * v[b]; 
-				fprintf(fp6,"%.10lf\t",ke[b]);
+				fprintf(fp6,"%.10f\t",ke[b]);
 				te += ke[b];
 				if (b == 0) {
 					dx = x[b];
@@ -143,7 +143,7 @@ int main() {
 				}
 				long double fac = dx * dx;
 				long double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
-				fprintf(fp8,"%.10lf\t", temp);
+				fprintf(fp8,"%.10f\t", temp);
 				te += temp;
 				cmass += x[b];
 			}
@@ -155,19 +155,19 @@ int main() {
 			long double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
 			te += temp2;
 			
-			fprintf(fp8,"%.10lf\n", temp2);
+			fprintf(fp8,"%.10f\n", temp2);
 			
-			fprintf(fp5, "%d\t%.10lf\n", 0, cmass);
+			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
 			
 			cmass /= chainlngth;
 			
-			fprintf(fp,"%d\t%.10lf\n", n, te);
+			fprintf(fp,"%d\t%.10f\n", n, te);
 			
 			for (int b = 0; b < chainlngth; b++) {
 				y[b] = x[b] - cmass;
-				fprintf(fp1,"%.10lf\t", y[b]); 
-				fprintf(fp3,"%.10lf\t", v[b]); 
-				fprintf(fp7,"%.10lf\t", acc[b]); 
+				fprintf(fp1,"%.10f\t", y[b]); 
+				fprintf(fp3,"%.10f\t", v[b]); 
+				fprintf(fp7,"%.10f\t", acc[b]); 
 			}
 			fprintf(fp1,"\n"); 
 			fprintf(fp3,"\n"); 
@@ -191,7 +191,7 @@ int main() {
 	fp2 = fopen("restart.dat","w");
 	fprintf(fp2, "%d\t%d\n", -1, nprntstps - 1);
 	for (int b = 0; b < chainlngth; b++) {
-		fprintf(fp2, "%.15lf\t%.15lf\t%.15lf\n", x[b], v[b], acc[b]);
+		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[b], v[b], acc[b]);
 	}
 	fclose(fp2);
 	

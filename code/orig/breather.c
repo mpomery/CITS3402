@@ -69,7 +69,7 @@ Initial perturbation at the center of the chain and it is a long double particle
 	dx = tke = tpe = te = 0.0;
 	for (i=0; i < chainlngth; i++) { 
 		ke[i] = 0.5 * v[i] * v[i];
-		fprintf(fp6,"%.10lf\t", ke[i]);
+		fprintf(fp6,"%.10f\t", ke[i]);
 		tke += ke[i];
 		j = i-1;
 		if (j == -1) { 
@@ -79,28 +79,28 @@ Initial perturbation at the center of the chain and it is a long double particle
 		}
 		fac = dx * dx;
 		pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-		fprintf(fp8,"%.10lf\t", pe[i]);
+		fprintf(fp8,"%.10f\t", pe[i]);
 		tpe += pe[i];
 	}
 	dx = -x[chainlngth - 1];
 	fac = dx * dx;
 	pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-	fprintf(fp8,"%.10lf\n", pe[i]);
+	fprintf(fp8,"%.10f\n", pe[i]);
 	tpe += pe[i];
 	fprintf(fp6,"\n");
 	te = tpe + tke; i = 0;
-	fprintf(fp,"%d\t%.10lf\n", i, te);
+	fprintf(fp,"%d\t%.10f\n", i, te);
 
 	for (k=0; k < chainlngth; k++) 
-		fprintf(fp1,"%.10lf\t", x[k]); 
+		fprintf(fp1,"%.10f\t", x[k]); 
 	fprintf(fp1,"\n"); 
 
 	for (k=0; k < chainlngth; k++) 
-		fprintf(fp3,"%.10lf\t", v[k]); 
+		fprintf(fp3,"%.10f\t", v[k]); 
 	fprintf(fp3,"\n"); 
 
 	for (k=0; k < chainlngth; k++) 
-		fprintf(fp7,"%.10lf\t", acc[k]); 
+		fprintf(fp7,"%.10f\t", acc[k]); 
 	fprintf(fp7,"\n"); 
 
 	hdt = 0.5 * dt;
@@ -135,7 +135,7 @@ Initial perturbation at the center of the chain and it is a long double particle
 			cmass = 0.0;
 			for (j = 0; j < chainlngth; j++) {
 				ke[j] = 0.5 * v[j] * v[j]; 
-				fprintf(fp6,"%.10lf\t",ke[j]);
+				fprintf(fp6,"%.10f\t",ke[j]);
 				tke += ke[j];
 				k = j-1;
 				if (k == -1) { 
@@ -145,7 +145,7 @@ Initial perturbation at the center of the chain and it is a long double particle
 				}
 				fac = dx * dx;
 				pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
-				fprintf(fp8,"%.10lf\t", pe[i]);
+				fprintf(fp8,"%.10f\t", pe[i]);
 				tpe += pe[i];
 				cmass += x[j];
 			}
@@ -153,24 +153,24 @@ Initial perturbation at the center of the chain and it is a long double particle
 			fac = dx * dx;
 			pe[i] = alpha * 0.5 * fac + alphaby4 * fac * fac;
 
-			fprintf(fp8,"%.10lf\n", pe[i]);
+			fprintf(fp8,"%.10f\n", pe[i]);
 			tpe += pe[i];
-			fprintf(fp5, "%d\t%.10lf\n", i, cmass);
+			fprintf(fp5, "%d\t%.10f\n", i, cmass);
 			cmass /= chainlngth;
 			fprintf(fp6,"\n");
 			te = tpe + tke;
-			fprintf(fp,"%d\t%.10lf\n", n, te);
+			fprintf(fp,"%d\t%.10f\n", n, te);
 			for (k=0; k < chainlngth; k++) {
 				y[k] = x[k] - cmass;
-				fprintf(fp1,"%.10lf\t", y[k]); 
+				fprintf(fp1,"%.10f\t", y[k]); 
 			}
 			fprintf(fp1,"\n"); 
 			for (k=0; k < chainlngth; k++) {
-				fprintf(fp3,"%.10lf\t", v[k]); 
+				fprintf(fp3,"%.10f\t", v[k]); 
 			}
 			fprintf(fp3,"\n"); 
 			for (k=0; k < chainlngth; k++) {
-				fprintf(fp7,"%.10lf\t", acc[k]); 
+				fprintf(fp7,"%.10f\t", acc[k]); 
 			}
 			fprintf(fp7,"\n"); 
 			n++; n1 = 1;
@@ -182,7 +182,7 @@ Initial perturbation at the center of the chain and it is a long double particle
   
 	fprintf(fp2, "%d\t%d\n", i-1, n-1);
 	for (j = 0; j < chainlngth; j++) 
-		fprintf(fp2, "%.15lf\t%.15lf\t%.15lf\n", x[j], v[j], acc[j]);
+		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[j], v[j], acc[j]);
 	fclose(fp2); 
         gettimeofday(&end, NULL);
         delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
