@@ -7,6 +7,7 @@ OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
 FLAGS = -std=c99 -Wall -Werror -O3 -fopenmp
 FLAGS2 = -std=c99 -O3 -fopenmp
+COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
 
@@ -34,11 +35,11 @@ clobber:
 
 test:
 	./breather
-	diff acce.dat orig/acce.dat | wc -l
-	diff cmass.dat orig/cmass.dat | wc -l
-	diff ke.dat orig/ke.dat | wc -l
-	diff pe.dat orig/pe.dat | wc -l
-	diff restart.dat orig/restart.dat | wc -l
-	diff strsh.dat orig/strsh.dat | wc -l
-	diff toten.dat orig/toten.dat | wc -l
-	diff velsh.dat orig/velsh.dat | wc -l
+	diff acce.dat orig/acce.dat $(COUNT)
+	diff cmass.dat orig/cmass.dat $(COUNT)
+	diff ke.dat orig/ke.dat $(COUNT)
+	diff pe.dat orig/pe.dat $(COUNT)
+	diff restart.dat orig/restart.dat $(COUNT)
+	diff strsh.dat orig/strsh.dat $(COUNT)
+	diff toten.dat orig/toten.dat $(COUNT)
+	diff velsh.dat orig/velsh.dat $(COUNT)
