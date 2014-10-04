@@ -11,15 +11,13 @@ COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
 
-all : clean $(BIN) original new test
+all : clean $(BIN) new original test
 
 new: clean $(BIN)
 
 original:
 	cd orig;\
-	ls;\
 	$(CC) $(FLAGS2) -o breather breather.c;\
-	./breather
 
 $(BIN) :
 	$(CC) $(FLAGS) -o breather breather.c
@@ -34,6 +32,8 @@ clobber:
 	$(RM) *.dat
 
 test:
+	./breather
+	cd orig;\
 	./breather
 	diff acce.dat orig/acce.dat $(COUNT)
 	diff cmass.dat orig/cmass.dat $(COUNT)
