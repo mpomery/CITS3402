@@ -12,7 +12,7 @@
 #define nmode 100  /* Ignore; not used here */
 #define nprntstps 10001 /* Number of output lines */
 							/* Also, t_end here because output is at t = 1, 2 etc. */ 
-#define dt 0.0001 /* Time step */
+#define dt 0.001 /* Time step */
 #define pi 3.14159 /* Ignore; not used here */
 #define beta 0.7 /* Beware! beta is the nonlinear coefficient! */
 		/* Usually alpha and beta appaears interchanged in literature */

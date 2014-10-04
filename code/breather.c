@@ -10,7 +10,7 @@
 #define nsprngs (chainlngth+1)
 #define nmode 100  /* Ignore; not used here */
 #define nprntstps 10001 /* Number of output lines */
-#define dt 0.0001 /* Time step */
+#define dt 0.001 /* Time step */
 #define beta 0.7 /* Beware! beta is the nonlinear coefficient! */
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
