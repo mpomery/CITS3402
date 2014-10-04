@@ -35,26 +35,26 @@ test:
 	time ./breather
 	time ./orig/breather
 	diff acce.dat orig/acce.dat $(COUNT)
-	acce.dat | wc -l
-	orig/acce.dat | wc -l
+	cat acce.dat | wc -l
+	cat orig/acce.dat | wc -l
 	diff cmass.dat orig/cmass.dat $(COUNT)
-	cmass.dat | wc -l
-	orig/cmass.dat | wc -l
+	cat cmass.dat | wc -l
+	cat orig/cmass.dat | wc -l
 	diff ke.dat orig/ke.dat $(COUNT)
-	ke.dat | wc -l
-	orig/ke.dat | wc -l
+	cat ke.dat | wc -l
+	cat orig/ke.dat | wc -l
 	diff pe.dat orig/pe.dat $(COUNT)
-	pe.dat | wc -l
-	orig/pe.dat | wc -l
+	cat pe.dat | wc -l
+	cat orig/pe.dat | wc -l
 	diff restart.dat orig/restart.dat $(COUNT)
-	restart.dat | wc -l
-	orig/restart.dat | wc -l
+	cat restart.dat | wc -l
+	cat orig/restart.dat | wc -l
 	diff strsh.dat orig/strsh.dat $(COUNT)
-	strsh.dat | wc -l
-	orig/strsh.dat | wc -l
+	cat strsh.dat | wc -l
+	cat orig/strsh.dat | wc -l
 	diff toten.dat orig/toten.dat $(COUNT)
-	toten.dat | wc -l
-	orig/toten.dat | wc -l
+	cat toten.dat | wc -l
+	cat orig/toten.dat | wc -l
 	diff velsh.dat orig/velsh.dat $(COUNT)
-	velsh.dat | wc -l
-	orig/velsh.dat | wc -l
+	cat velsh.dat | wc -l
+	cat orig/velsh.dat | wc -l
