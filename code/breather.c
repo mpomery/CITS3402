@@ -6,11 +6,11 @@
 #include <math.h>
 #include <sys/time.h>
 
-#define chainlngth 100
+#define chainlngth 200
 #define nsprngs (chainlngth+1)
 #define nmode 100  /* Ignore; not used here */
 #define nprntstps 10001 /* Number of output lines */
-#define dt 0.001 /* Time step */
+#define dt 0.0001 /* Time step */
 #define beta 0.7 /* Beware! beta is the nonlinear coefficient! */
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
@@ -52,7 +52,7 @@ int main() {
 	fp8 = fopen("pe.dat","w");
 	
 	/* Initialize the position, velocity, acceleration arrays */
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) { 
 		x[a] = 0.0;
 		acc[a] = 0.0;
@@ -201,6 +201,7 @@ int main() {
 void accel(double *x, double *acc) {
 	// Not worth parallizing this code, slows it down
 	// Making it run in parallel properly might help
+	// Nope. This in parallel doubles run time
 	//#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) {
 		double dximn1 = 0.0;
