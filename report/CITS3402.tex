@@ -72,10 +72,10 @@ Performance was tested by running the code on \texttt{hpc.csse.uwa.edu.au}.
 Unfortunately no system had been implemented to prevent multiple people from attempting to test at the same time, so in the time leading up to the submission deadline the server ended up being monopolized by one person.
 The original program was run to get a base timing, however due to how quickly it ran, it was modified so that the chain length was 500.
 This meant that the code ran slow enough to see if any improvements had been made, but not so slow as to hinder development.
-
-\paragraph \indent
 While testing, an apparent speedup was observed due to a difference in compile flags.
 For this reason, I tested with multiple compile flags to see how it altered performance.
+
+\subsubsection*{Test Results}
 
 \begin{tabular}{ | l | l | l | }
 	\hline
@@ -93,6 +93,30 @@ For this reason, I tested with multiple compile flags to see how it altered perf
 	& -std=c99 -Wall -Werror -fopenmp -O2 & 18.023 \\ \hline
 	& -std=c99 -Wall -Werror -fopenmp -O3 & 18.760 \\ \hline
 \end{tabular}
+
+\paragraph \indent
+From the data in this table, there are only two sets of results we need to consider; No compiler optimization and maximum compiler optimization.
+
+\subsubsection*{No Compiler Optimization}
+
+\begin{tabular}{ | l | l | l | }
+	\hline
+	\textbf{Name} & \textbf{Compile Flags} & \textbf{Run Time (seconds)} \\ \hline
+	Supplied & -std=c99 & 77.989 \\ \hline
+	Refactored & -std=c99 -Wall -Werror & 86.418 \\ \hline
+	Parallel & -std=c99 -Wall -Werror -fopenmp & 35.938 \\ \hline
+\end{tabular}
+
+\subsubsection*{Maximum Compiler Optimization}
+
+\begin{tabular}{ | l | l | l | }
+	\hline
+	\textbf{Name} & \textbf{Compile Flags} & \textbf{Run Time (seconds)} \\ \hline
+	Supplied & -std=c99 -O3 & 22.067 \\ \hline
+	Refactored & -std=c99 -Wall -Werror -O3 & 22.110 \\ \hline
+	Parallel & -std=c99 -Wall -Werror -fopenmp -O3 & 18.760 \\ \hline
+\end{tabular}
+
 
 %\begin{thebibliography}{10}
 %	\bibitem{linkback}text
