@@ -5,22 +5,24 @@ CC=gcc
 BIN = breather
 OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
-FLAGS = -std=c99 -Wall -Werror -fopenmp
+FLAGS = -std=c99 -Wall -Werror
 FLAGS2 = -std=c99
+FLAGS3 = -std=c99 -Wall -Werror -fopenmp
 COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
 
-all : clean $(BIN) new original test
-
-new: clean $(BIN)
+all : clean new parallel original test
 
 original:
 	cd orig;\
 	$(CC) $(FLAGS2) -o breather breather.c;\
 
-$(BIN) :
+new:
 	$(CC) $(FLAGS) -o breather breather.c
+
+parallel:
+	$(CC) $(FLAGS3) -o breather breather.c
 
 clean:
 	$(RM) $(DIRT)
