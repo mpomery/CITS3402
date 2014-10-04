@@ -53,13 +53,21 @@ int main() {
 	fp6 = fopen("ke.dat","w");
 	fp7 = fopen("acce.dat","w");
 	fp8 = fopen("pe.dat","w");
-	
-	/* Initialize the position, velocity, acceleration arrays */
-	//#pragma omp parallel for
-	for (int a = 0; a < chainlngth; a++) { 
-		x[a] = 0.0;
-		acc[a] = 0.0;
-		v[a] = 0.0;
+	#pragma omp parallel
+	{
+		/* Initialize the position, velocity, acceleration arrays */
+		#pragma omp single
+		for (int a = 0; a < chainlngth; a++) {
+			x[a] = 0.0;
+		}
+		#pragma omp single
+		for (int a = 0; a < chainlngth; a++) {
+			acc[a] = 0.0;
+		}
+		#pragma omp single
+		for (int a = 0; a < chainlngth; a++) {
+			v[a] = 0.0;
+		}
 	}
 	
 	/* Initial perturbation at the center of the chain and it is a double
@@ -198,7 +206,7 @@ void accel(double *x, double *acc) {
 	// Not worth parallizing this code, slows it down
 	// Making it run in parallel properly might help
 	// Nope. This in parallel doubles run time
-	//#pragma omp parallel for
+	#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) {
 		double dximn1 = 0.0;
 		double dxipl1 = 0.0;
