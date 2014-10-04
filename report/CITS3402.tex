@@ -31,7 +31,7 @@
 \begin{document}
 % title page
 \title{CITS3402 High Performance Computing}
-%\subtitle{}
+\subtitle{}
 \author{Mitchell Pomery\\
 21130887}
 \maketitle
@@ -42,27 +42,57 @@
 
 \section*{Introduction}
 \paragraph \indent
-To gain the ability to impliment parallel processing in the code the variable scopes needed to be fixed.
-The code was originally C89 standard, which relies heavily on global variables.
-This mean that every loop was using the same variable.
+To gain the ability to implement parallel processing in the code the variable scopes needed to be fixed.
+The code was originally written in the C89 standard, which relies heavily on global variables, so it needed to be rewritten.
+This mean that every loop was using the same variable, and so attempting to run multiple loops at once would cause them to increment each others initialization variable.
+
 
 \section*{Development}
 \paragraph \indent
 The code was placed into a github repository to make it easy to track changes and backtrack if issues arrive.
-This came in handy when I accidentally changed a double to an integer and was suddenly seeing two files coming out diferently to before.
-To check that the code was creating the right output after each modification, a makefile was used.
-It compiles the code, runs breather and then runs \texttt{diff \{file\} orig/\{file\} | wc -l} so that is was easy to which files, if any, had differing output.
-Jenkins CI (Continuous Integration) was going to be used to automate the testing, however I was unable to get my Jenkins server to SSH to the High Performance Server, despite both machines being located at UWA.
+This came in handy when I accidentally changed a double to an integer and was suddenly seeing two files coming out differently to before.
+It was also useful when trying out different techniques for making the code use multiple threads, as some changes were not worth it.
+
+\paragraph \indent
+To make sure that the code was compiled consistently, a makefile was used.
+The makefile was also used for testing that the input and output at each code iteration was the same, by comparing the new programs output with the output from the original code base.
+This worked perfectly while refactoring the original code until the main while loop was modified.
+The main while loop was changed to a for loop, and the output ended up being ever so slightly different due to issues with floating point number precision.
+
+\paragraph \indent
+Jenkins CI (Continuous Integration) was originally going to be used to automate the testing, however I was unable to get my Jenkins server to SSH to the High Performance Computing Server, despite both machines being located at UWA.
+Jenkins was eventually set up on the High Performance Computing Server, and a job was created to automate the building and testing.
+This allowed for a massive reduction time due to the fact that transferring files, compiling and then testing was all automated.
+After each job had been run, the output was logged, along with the git revisions SHA, meaning that past results could be viewed to debug problems and performance decreases that occurred.
 
 
 \section*{Performance}
 \paragraph \indent
 Performance was tested by running the code on \texttt{hpc.csse.uwa.edu.au}.
-Unfortunately, no system had been implimented to prevent multiple people from attempting to test at the same time, so testing had to be done while other people were unlikely to be trying.
-There was also nothing to prevent people from testing or running other code on the machine, and so it was not unusual to see running python or java processes chewing up large amounts of CPU time and physical memory.
+Unfortunately no system had been implemented to prevent multiple people from attempting to test at the same time, so in the time leading up to the submission deadline the server ended up being monopolized by one person.
+The original program was run to get a base timing, however due to how quickly it ran, it was modified so that the chain length was 500.
+This meant that the code ran slow enough to see if any improvements had been made, but not so slow as to hinder development.
 
-The original program was run to get a base timing, however due to how quickly it ran, it was modified so that the chain length was 200.
-This meant that the code ran slow enough to see if any improvements had been made, but not so slow as to hog resources.
+\paragraph \indent
+While testing, an apparent speedup was observed due to a difference in compile flags.
+For this reason, I tested with multiple compile flags to see how it altered performance.
+
+\begin{tabular}{ | l | l | l | }
+	\hline
+	\textbf{Name} & \textbf{Compile Flags} & \textbf{Run Time (seconds)} \\ \hline
+	Supplied & -std=c99 & 77.989 \\ \hline
+	& -std=c99 -O1 & 26.914 \\ \hline
+	& -std=c99 -O2 & 25.748 \\ \hline
+	& -std=c99 -O3 & 22.067 \\ \hline
+	Refactored & -std=c99 -Wall -Werror & 86.418 \\ \hline
+	& -std=c99 -Wall -Werror -O1 & 24.303 \\ \hline
+	& -std=c99 -Wall -Werror -O2 & 24.868 \\ \hline
+	& -std=c99 -Wall -Werror -O3 & 22.110 \\ \hline
+	Parallel & -std=c99 -Wall -Werror -fopenmp & 35.938 \\ \hline
+	& -std=c99 -Wall -Werror -fopenmp -O1 & 20.639 \\ \hline
+	& -std=c99 -Wall -Werror -fopenmp -O2 & 18.023 \\ \hline
+	& -std=c99 -Wall -Werror -fopenmp -O3 & 18.760 \\ \hline
+\end{tabular}
 
 %\begin{thebibliography}{10}
 %	\bibitem{linkback}text
