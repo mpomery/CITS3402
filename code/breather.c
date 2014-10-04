@@ -200,7 +200,7 @@ int main() {
 void accel(double *x, double *acc) {
 	// Not worth parallizing this code, slows it down
 	// Making it run in parallel properly might help
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) {
 		double dximn1 = 0.0;
 		double dxipl1 = 0.0;
