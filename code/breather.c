@@ -53,18 +53,18 @@ int main() {
 	fp6 = fopen("ke.dat","w");
 	fp7 = fopen("acce.dat","w");
 	fp8 = fopen("pe.dat","w");
-//	#pragma omp parallel
+	#pragma omp parallel
 	{
 		/* Initialize the position, velocity, acceleration arrays */
-//		#pragma omp single
+		#pragma omp single
 		for (int a = 0; a < chainlngth; a++) {
 			x[a] = 0.0;
 		}
-//		#pragma omp single
+		#pragma omp single
 		for (int a = 0; a < chainlngth; a++) {
 			acc[a] = 0.0;
 		}
-//		#pragma omp single
+		#pragma omp single
 		for (int a = 0; a < chainlngth; a++) {
 			v[a] = 0.0;
 		}
@@ -112,7 +112,7 @@ int main() {
 	//int n1, prncnt;
 	//n1 = 0;
 	for (int n = 1; n < nprntstps; n++) {
-//		#pragma omp parallel for
+		#pragma omp parallel for
 		for (int n1 = 1; n1 < prntstps; n1++) {
 			/* new positions and mid-velocities; velocity-Verlet algorithm  */
 			for (int b = 0; b < chainlngth; b++) {
@@ -206,7 +206,7 @@ void accel(double *x, double *acc) {
 	// Not worth parallizing this code, slows it down
 	// Making it run in parallel properly might help
 	// Nope. This in parallel doubles run time
-//	#pragma omp parallel for
+	#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) {
 		double dximn1 = 0.0;
 		double dxipl1 = 0.0;

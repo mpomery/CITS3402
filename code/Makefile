@@ -5,13 +5,13 @@ CC=gcc
 BIN = breather
 OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
-FLAGS = -std=c99 -Wall -Werror -O1
+FLAGS = -std=c99 -Wall -Werror -O3
 FLAGS2 = -std=c99 -O3
 COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
 
-all : clean parallel test
+all : clean parallel original test
 
 original:
 	cd orig;\
