@@ -104,7 +104,7 @@ int main() {
 	//int n1, prncnt;
 	//n1 = 0;
 	for (int n = 1; n < nprntstps; n++) {
-		for (int n1 = 0; n1 <= prntstps; n1++) {
+		for (int n1 = 0; n1 < prntstps; n1++) {
 			/* new positions and mid-velocities; velocity-Verlet algorithm  */
 			for (int b = 0; b < chainlngth; b++) {
 				x[b] += dt * v[b] + hdt2 * acc[b];
