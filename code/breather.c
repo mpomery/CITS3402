@@ -52,6 +52,7 @@ int main() {
 	fp8 = fopen("pe.dat","w");
 	
 	/* Initialize the position, velocity, acceleration arrays */
+	#pragma omp parallel for
 	for (int a = 0; a < chainlngth; a++) { 
 		x[a] = 0.0;
 		acc[a] = 0.0;
