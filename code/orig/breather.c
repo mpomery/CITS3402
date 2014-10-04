@@ -19,24 +19,24 @@
 #define alpha .16 /* alpha is the coefficient of the linear term! */
 #define spcng 1.0 /* Just to make it explicit; not used in the program */
 
-double accel(double *, double *);
-double initialize(double *); /* Ignore; not used here */
-double normalmode(int ,double *, double *, double *);/* Ignore; not used here */
+long double accel(long double *, long double *);
+long double initialize(long double *); /* Ignore; not used here */
+long double normalmode(int ,long double *, long double *, long double *);/* Ignore; not used here */
 
 main() {
         struct timeval start, end;
-        double delta;
-	double a = alpha;
-	double b = beta;
+        long double delta;
+	long double a = alpha;
+	long double b = beta;
 	printf("Alpha is:  %lf \n",  a);
 	printf("Beta is :  %lf \n", b);
 
 
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
 	int i, j, k, n, n1, prncnt, prntstps;
-	double v[chainlngth], x[chainlngth], tke, tpe, te, ke1, omegak[nmode];
-	double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
-	double t, t1, dx, hdt, hdt2,  twopi, twopisqr, alphaby4, cmass, cmom;
+	long double v[chainlngth], x[chainlngth], tke, tpe, te, ke1, omegak[nmode];
+	long double acc[chainlngth], ke[chainlngth], pe[nsprngs], fac, y[chainlngth];
+	long double t, t1, dx, hdt, hdt2,  twopi, twopisqr, alphaby4, cmass, cmom;
 
 	prntstps = (int) (1.0 / dt);
         gettimeofday(&start, NULL);
@@ -61,7 +61,7 @@ main() {
 	}
 
 /*
-Initial perturbation at the center of the chain and it is a double particle perturbation (EVEN Parity)
+Initial perturbation at the center of the chain and it is a long double particle perturbation (EVEN Parity)
 */
 	x[50] = -0.98;
 	x[51] = +0.98;	// Even Parity
@@ -190,9 +190,9 @@ Initial perturbation at the center of the chain and it is a double particle pert
         printf("Total time=%f seconds\n", delta);
 }
 
-double accel(double *x, double *acc) {
+long double accel(long double *x, long double *acc) {
 
-	double dxi, twodxi, dxipl1, dximn1, fac, fac1, fac2, fac13, fac23;
+	long double dxi, twodxi, dxipl1, dximn1, fac, fac1, fac2, fac13, fac23;
 	int i, j, k;
 
 	for (i = 0; i < chainlngth; i++) {
