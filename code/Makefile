@@ -10,7 +10,9 @@ FLAGS2 = -std=c99 -O3 -fopenmp
 
 #-----------------------------------------------------------------------------
 
-all : clean $(BIN) test
+all : clean $(BIN) original new test
+
+new: clean $(BIN)
 
 original:
 	cd orig;\
