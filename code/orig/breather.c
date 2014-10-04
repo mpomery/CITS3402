@@ -43,14 +43,14 @@ main() {
         //char *buf=(char *)malloc(sizeof(char)*10000000);
         //setvbuf(fp1, buf, _IOFBF, sizeof(buf));
 	alphaby4 = beta / 4.0;
-	fp = fopen("toten.dat","w");
-	fp1 = fopen("strsh.dat","w");
-	fp3 = fopen("velsh.dat","w");
-	fp5 = fopen("cmass.dat","w");
-	fp2 = fopen("restart.dat","w");
-	fp6 = fopen("ke.dat","w");
-	fp7 = fopen("acce.dat","w");
-	fp8 = fopen("pe.dat","w");
+	fp = fopen("orig/toten.dat","w");
+	fp1 = fopen("orig/strsh.dat","w");
+	fp3 = fopen("orig/velsh.dat","w");
+	fp5 = fopen("orig/cmass.dat","w");
+	fp2 = fopen("orig/restart.dat","w");
+	fp6 = fopen("orig/ke.dat","w");
+	fp7 = fopen("orig/acce.dat","w");
+	fp8 = fopen("orig/pe.dat","w");
 
         //start=time(NULL);
 /* Initialize the position, velocity, acceleration arrays */
