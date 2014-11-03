@@ -22,9 +22,6 @@ void accel(double *, double *);
 int rank, size;
 
 int main(int argc, char ** argv) {
-	// Used for timing
-	struct timeval start, end;
-	
 	// MPI Initialization. If the function wasn't enough
 	MPI_Init(&argc, &argv);
 	
@@ -35,10 +32,25 @@ int main(int argc, char ** argv) {
 	// Print for debugging
 	printf("MPI: Process %d of %d\n", rank, size);
 	
-	// File Pointers!
-	FILE *fp0, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
+	/* How to Open MPI
+	 * [removed for ease]
+	 * That won't work... We need all of the x's for the next accels
+	 * We could split by chainlngth
+	 * So How we Are Going to do this:
+	 * - Everything up to here runs on Master
+	 * - The big main loop runs on Master. Things inside it rely on things prior to it
+	 * - The small for loop gets split up and sent to multiple machines
+	 * - We can Use Motsugo and Mussel for testing (eventually)
+	 * - As chainlnght increases, the use of more computers becomes better and better
+	 */
 	
-	if (rank == 0) { // Master Node
+	if (rank == 0) { // Master, does all the heavy lifting
+		// Used for timing
+		struct timeval start, end;
+	
+		// File Pointers!
+		FILE *fp0, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
+		
 		// Output our alpha and beta values
 		printf("Alpha is:  %f \n", alpha);
 		printf("Beta is :  %f \n", beta);
@@ -123,112 +135,120 @@ int main(int argc, char ** argv) {
 		fprintf(fp1,"\n"); 
 		fprintf(fp3,"\n");
 		fprintf(fp7,"\n"); 
-	}
-
-	/* How to Open MPI
-	 * - Everything up to here should really be run on Master
-	 * - Calculating the initial Accels should be done on Master too
-	 * - fp 0,1,3,5,6,7,8 Are all used throughout this
-	 *   - We need to rewrite this then
-	 * - Have Master calculate the initial accels
-	 *   - Master sends x, accels to slave
-	 *   - Slave sends back data to print
-	 * That won't work... We need all of the x's for the next accels
-	 * We could split by chainlngth
-	 * So How we Are Going to do this:
-	 * - Everything up to here runs on Master
-	 * - The big main loop runs on Master. Things inside it rely on things prior to it
-	 * - The small for loop gets split up and sent to multiple machines
-	 * - We can Use Motsugo and Mussel for testing (eventually)
-	 * - As chainlnght increases, the use of more computers becomes better and better
-	 */
-	
-	for (int n = 1; n < nprntstps; n++) {
-		#pragma omp parallel for
-		for (int n1 = 1; n1 < prntstps; n1++) {
-			/* new positions and mid-velocities; velocity-Verlet algorithm  */
-			for (int b = 0; b < chainlngth; b++) {
-				x[b] += dt * v[b] + hdt2 * acc[b];
-			}
-			
-			/* new accelerations */
-			accel(x, acc);
-			
-			/* new final velocities */
-			for (int b = 0; b < chainlngth; b++) {
-				v[b] += hdt * acc[b];
-			}
+		
+		//Calculate how much of the chain will be sent to each node
+		int datalength = chainlength / size;
+		printf("DL: %d", datalength);
+		// For when they don't divide nicely
+		int ourdata = chainlength - (chainlength * size);
+		printf("OD: %d", ourdata);
+		
+		// Send datalength to everyone
+		for (int i = 1; i < size; i++) {
+				// Send Data Away
 		}
-		/* Kinetic energies */
-		double te = dx = 0.0;  //reset all variables
-		cmass = 0.0;
-		for (int b = 0; b < chainlngth; b++) {
-			ke[b] = 0.5 * v[b] * v[b]; 
-			fprintf(fp6,"%.10f\t",ke[b]);
-			te += ke[b];
-			if (b == 0) {
-				dx = x[b];
-			} else {
-				dx = x[b] - x[b - 1];
+		
+		
+		for (int n = 1; n < nprntstps; n++) {
+			// This is what we are going to split up
+			// Split the arrays into multiple parts and seen the processing to
+			// external nodes, then recombine on the master
+			
+			for (int i = 1; i < size; i++) {
+				// Send Data Away
 			}
+			
+			// Process our section
+			#pragma omp parallel for
+			for (int n1 = 1; n1 < prntstps; n1++) {
+				/* new positions and mid-velocities; velocity-Verlet algorithm  */
+				for (int b = 0; b < chainlngth; b++) {
+					x[b] += dt * v[b] + hdt2 * acc[b];
+				}
+				
+				/* new accelerations */
+				accel(x, acc);
+				
+				/* new final velocities */
+				for (int b = 0; b < chainlngth; b++) {
+					v[b] += hdt * acc[b];
+				}
+			}
+			/* Kinetic energies */
+			double te = dx = 0.0;  //reset all variables
+			cmass = 0.0;
+			for (int b = 0; b < chainlngth; b++) {
+				ke[b] = 0.5 * v[b] * v[b]; 
+				fprintf(fp6,"%.10f\t",ke[b]);
+				te += ke[b];
+				if (b == 0) {
+					dx = x[b];
+				} else {
+					dx = x[b] - x[b - 1];
+				}
+				double fac = dx * dx;
+				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
+				fprintf(fp8,"%.10f\t", temp);
+				te += temp;
+				cmass += x[b];
+			}
+			fprintf(fp6,"\n");
+			
+			dx = -x[chainlngth - 1];
 			double fac = dx * dx;
-			double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
-			fprintf(fp8,"%.10f\t", temp);
-			te += temp;
-			cmass += x[b];
+			
+			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			te += temp2;
+			
+			fprintf(fp8,"%.10f\n", temp2);
+			
+			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
+			
+			cmass /= chainlngth;
+			
+			fprintf(fp0,"%d\t%.10f\n", n, te);
+			
+			for (int b = 0; b < chainlngth; b++) {
+				y[b] = x[b] - cmass;
+				fprintf(fp1,"%.10f\t", y[b]); 
+				fprintf(fp3,"%.10f\t", v[b]); 
+				fprintf(fp7,"%.10f\t", acc[b]); 
+			}
+			fprintf(fp1,"\n"); 
+			fprintf(fp3,"\n"); 
+			fprintf(fp7,"\n"); 
 		}
-		fprintf(fp6,"\n");
 		
-		dx = -x[chainlngth - 1];
-		double fac = dx * dx;
+		// Close Files
+		fclose(fp0);
+		fclose(fp1);
+		fclose(fp3);
+		fclose(fp5);
+		fclose(fp6);
+		fclose(fp7);
+		fclose(fp8);
 		
-		double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
-		te += temp2;
-		
-		fprintf(fp8,"%.10f\n", temp2);
-		
-		fprintf(fp5, "%d\t%.10f\n", 0, cmass);
-		
-		cmass /= chainlngth;
-		
-		fprintf(fp0,"%d\t%.10f\n", n, te);
-		
+		fp2 = fopen("restart.dat","w");
+		fprintf(fp2, "%d\t%d\n", -1, nprntstps - 1);
 		for (int b = 0; b < chainlngth; b++) {
-			y[b] = x[b] - cmass;
-			fprintf(fp1,"%.10f\t", y[b]); 
-			fprintf(fp3,"%.10f\t", v[b]); 
-			fprintf(fp7,"%.10f\t", acc[b]); 
+			fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[b], v[b], acc[b]);
 		}
-		fprintf(fp1,"\n"); 
-		fprintf(fp3,"\n"); 
-		fprintf(fp7,"\n"); 
-	}
-	
-	// Close Files
-	fclose(fp0);
-	fclose(fp1);
-	fclose(fp3);
-	fclose(fp5);
-	fclose(fp6);
-	fclose(fp7);
-	fclose(fp8);
-	
-	fp2 = fopen("restart.dat","w");
-	fprintf(fp2, "%d\t%d\n", -1, nprntstps - 1);
-	for (int b = 0; b < chainlngth; b++) {
-		fprintf(fp2, "%.15f\t%.15f\t%.15f\n", x[b], v[b], acc[b]);
-	}
-	fclose(fp2);
-	
-	if (rank == 0) {
-		// Again, we only care about timing on the master node
+		fclose(fp2);
+		
 		// Time how long the operation took
 		gettimeofday(&end, NULL);
 		double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
 		end.tv_usec - start.tv_usec) / 1.e6;
 		printf("Total time=%f seconds\n", delta);
 	}
-
+	else { // We are a slave node
+		// Get how big our chainlnght portion is
+		// Receive the data
+		// Run that one loop
+		// Send it back
+		
+	}
+	
 	// We have Finished with MPI now
 	MPI_Finalize();
 }
