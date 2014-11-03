@@ -1,6 +1,6 @@
 #! /usr/bin/make
 
-CC=gcc
+CC=/usr/lib64/openmpi/bin/mpicc
 
 BIN = breather
 OBJECTS = breather.o
