@@ -35,12 +35,27 @@ int main(int argc, char ** argv) {
 	// Print for debugging
 	printf("MPI: Process %d of %d\n", rank, size);
 	
-	// Output our alpha and beta values
-	printf("Alpha is:  %f \n", alpha);
-	printf("Beta is :  %f \n", beta);
-	
 	// File Pointers!
-	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
+	FILE *fp0, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;
+	
+	if (rank == 0) { // Master Node
+		// Output our alpha and beta values
+		printf("Alpha is:  %f \n", alpha);
+		printf("Beta is :  %f \n", beta);
+		
+		// Start Timing - We only care about the timing on master
+		gettimeofday(&start, NULL);
+
+		// We want all file IO on Master		
+		// Open Files for Writing
+		fp0 = fopen("toten.dat","w");
+		fp1 = fopen("strsh.dat","w");
+		fp3 = fopen("velsh.dat","w");
+		fp5 = fopen("cmass.dat","w");
+		fp6 = fopen("ke.dat","w");
+		fp7 = fopen("acce.dat","w");
+		fp8 = fopen("pe.dat","w");
+	}
 	
 	double v[chainlngth], x[chainlngth], te;
 	double acc[chainlngth], ke[chainlngth], pe, y[chainlngth];
@@ -48,26 +63,12 @@ int main(int argc, char ** argv) {
 	
 	int prntstps = (int) (1.0 / dt);
 	
-	// Start Timing
-	gettimeofday(&start, NULL);
-	
-	//char *buf=(char *)malloc(sizeof(char)*10000000);
-	//setvbuf(fp1, buf, _IOFBF, sizeof(buf));
-	
 	alphaby4 = beta / 4.0;
 	hdt = 0.5 * dt;
 	hdt2 = dt * hdt;
 	
 	te = 0.0;
 	
-	// Open Files for Writing
-	fp = fopen("toten.dat","w");
-	fp1 = fopen("strsh.dat","w");
-	fp3 = fopen("velsh.dat","w");
-	fp5 = fopen("cmass.dat","w");
-	fp6 = fopen("ke.dat","w");
-	fp7 = fopen("acce.dat","w");
-	fp8 = fopen("pe.dat","w");
 	#pragma omp parallel
 	{
 		/* Initialize the position, velocity, acceleration arrays */
@@ -113,7 +114,7 @@ int main(int argc, char ** argv) {
 	fprintf(fp8,"%.10f\n", pe);
 	te += pe;
 	
-	fprintf(fp,"%d\t%.10f\n", 0, te);
+	fprintf(fp0,"%d\t%.10f\n", 0, te);
 	
 	for (int c = 0; c < chainlngth; c++) {
 		fprintf(fp1,"%.10f\t", x[c]);
@@ -123,6 +124,12 @@ int main(int argc, char ** argv) {
 	fprintf(fp1,"\n"); 
 	fprintf(fp3,"\n");
 	fprintf(fp7,"\n"); 
+	
+	/* How to Open MPI
+	 * - Everything up to here should really be run on Master
+	 * - Calculating the initial Accels should be done on Master too
+	 * - fp 0,1,3,5,6,7,8 Are all used throughout this
+	 */
 	
 	for (int n = 1; n < nprntstps; n++) {
 		#pragma omp parallel for
@@ -172,7 +179,7 @@ int main(int argc, char ** argv) {
 		
 		cmass /= chainlngth;
 		
-		fprintf(fp,"%d\t%.10f\n", n, te);
+		fprintf(fp0,"%d\t%.10f\n", n, te);
 		
 		for (int b = 0; b < chainlngth; b++) {
 			y[b] = x[b] - cmass;
@@ -186,7 +193,7 @@ int main(int argc, char ** argv) {
 	}
 	
 	// Close Files
-	fclose(fp);
+	fclose(fp0);
 	fclose(fp1);
 	fclose(fp3);
 	fclose(fp5);
@@ -201,12 +208,15 @@ int main(int argc, char ** argv) {
 	}
 	fclose(fp2);
 	
-	// Time how long the operation took
-	gettimeofday(&end, NULL);
-	double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
-	end.tv_usec - start.tv_usec) / 1.e6;
-	printf("Total time=%f seconds\n", delta);
-	
+	if (rank == 0) {
+		// Again, we only care about timing on the master node
+		// Time how long the operation took
+		gettimeofday(&end, NULL);
+		double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+		end.tv_usec - start.tv_usec) / 1.e6;
+		printf("Total time=%f seconds\n", delta);
+	}
+
 	// We have Finished with MPI now
 	MPI_Finalize();
 }
