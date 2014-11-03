@@ -18,13 +18,21 @@
 
 void accel(double *, double *);
 
+// MPI Related Variables
+int rank, size;
+
 int main(int argc, char ** argv) {
 	// Used for timing
 	struct timeval start, end;
-
+	
 	// MPI Initialization. If the function wasn't enough
 	MPI_Init(&argc, &argv);
-
+	
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+	
+	printf("MPI: Process %d of %d\n", rank, size);
+	
 	// Output our alpha and beta values
 	printf("Alpha is:  %f \n", alpha);
 	printf("Beta is :  %f \n", beta);

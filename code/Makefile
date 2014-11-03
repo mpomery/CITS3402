@@ -22,7 +22,7 @@ parallel:
 	$(CC) $(FLAGS) -o breather breather.c
 
 mpitest:
-	time $(MPIEXEC) -hostfile hosts.txt -np 1 ./breather
+	time $(MPIEXEC) -hostfile hosts.txt -np 2 ./breather
 
 clean:
 	$(RM) $(DIRT)
