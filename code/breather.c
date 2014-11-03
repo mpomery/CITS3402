@@ -55,80 +55,87 @@ int main(int argc, char ** argv) {
 		fp6 = fopen("ke.dat","w");
 		fp7 = fopen("acce.dat","w");
 		fp8 = fopen("pe.dat","w");
-	}
-	
-	double v[chainlngth], x[chainlngth], te;
-	double acc[chainlngth], ke[chainlngth], pe, y[chainlngth];
-	double hdt, hdt2, alphaby4, cmass;
-	
-	int prntstps = (int) (1.0 / dt);
-	
-	alphaby4 = beta / 4.0;
-	hdt = 0.5 * dt;
-	hdt2 = dt * hdt;
-	
-	te = 0.0;
-	
-	#pragma omp parallel
-	{
-		/* Initialize the position, velocity, acceleration arrays */
-		#pragma omp single
-		for (int a = 0; a < chainlngth; a++) {
-			x[a] = 0.0;
+		
+		double v[chainlngth], x[chainlngth], te;
+		double acc[chainlngth], ke[chainlngth], pe, y[chainlngth];
+		double hdt, hdt2, alphaby4, cmass;
+		
+		int prntstps = (int) (1.0 / dt);
+		
+		alphaby4 = beta / 4.0;
+		hdt = 0.5 * dt;
+		hdt2 = dt * hdt;
+		
+		te = 0.0;
+		
+		#pragma omp parallel
+		{
+			/* Initialize the position, velocity, acceleration arrays */
+			#pragma omp single
+			for (int a = 0; a < chainlngth; a++) {
+				x[a] = 0.0;
+			}
+			#pragma omp single
+			for (int a = 0; a < chainlngth; a++) {
+				acc[a] = 0.0;
+			}
+			#pragma omp single
+			for (int a = 0; a < chainlngth; a++) {
+				v[a] = 0.0;
+			}
 		}
-		#pragma omp single
-		for (int a = 0; a < chainlngth; a++) {
-			acc[a] = 0.0;
+		
+		/* Initial perturbation at the center of the chain and it is a double
+		particle perturbation (EVEN Parity) */
+		x[50] = -0.98;
+		x[51] = +0.98; // Even Parity
+		
+		double dx = 0.0;
+		
+		for (int a = 0; a < chainlngth; a++) { 
+			ke[a] = 0.0;
+			fprintf(fp6,"%.10f\t", ke[a]);
+			if (a == 0) {
+				dx = x[a];
+			} else {
+				dx = x[a] - x[a - 1]; 
+			}
+			double fac = dx * dx;
+			pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			fprintf(fp8,"%.10f\t", pe);
+			te += pe;
 		}
-		#pragma omp single
-		for (int a = 0; a < chainlngth; a++) {
-			v[a] = 0.0;
-		}
-	}
-	
-	/* Initial perturbation at the center of the chain and it is a double
-	particle perturbation (EVEN Parity) */
-	x[50] = -0.98;
-	x[51] = +0.98; // Even Parity
-	
-	double dx = 0.0;
-	
-	for (int a = 0; a < chainlngth; a++) { 
-		ke[a] = 0.0;
-		fprintf(fp6,"%.10f\t", ke[a]);
-		if (a == 0) {
-			dx = x[a];
-		} else {
-			dx = x[a] - x[a - 1]; 
-		}
+		fprintf(fp6,"\n");
+		
+		dx = -x[chainlngth - 1];
 		double fac = dx * dx;
 		pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
-		fprintf(fp8,"%.10f\t", pe);
+		fprintf(fp8,"%.10f\n", pe);
 		te += pe;
+		
+		fprintf(fp0,"%d\t%.10f\n", 0, te);
+		
+		for (int c = 0; c < chainlngth; c++) {
+			fprintf(fp1,"%.10f\t", x[c]);
+			fprintf(fp3,"%.10f\t", v[c]);
+			fprintf(fp7,"%.10f\t", acc[c]);
+		}
+		fprintf(fp1,"\n"); 
+		fprintf(fp3,"\n");
+		fprintf(fp7,"\n"); 
 	}
-	fprintf(fp6,"\n");
-	
-	dx = -x[chainlngth - 1];
-	double fac = dx * dx;
-	pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
-	fprintf(fp8,"%.10f\n", pe);
-	te += pe;
-	
-	fprintf(fp0,"%d\t%.10f\n", 0, te);
-	
-	for (int c = 0; c < chainlngth; c++) {
-		fprintf(fp1,"%.10f\t", x[c]);
-		fprintf(fp3,"%.10f\t", v[c]);
-		fprintf(fp7,"%.10f\t", acc[c]);
-	}
-	fprintf(fp1,"\n"); 
-	fprintf(fp3,"\n");
-	fprintf(fp7,"\n"); 
-	
+
 	/* How to Open MPI
 	 * - Everything up to here should really be run on Master
 	 * - Calculating the initial Accels should be done on Master too
 	 * - fp 0,1,3,5,6,7,8 Are all used throughout this
+	 *   - We need to rewrite this then
+	 * - Have Master calculate the initial accels
+	 *   - Master sends x, accels to slave
+	 *   - Slave sends back data to print
+	 * That won't work... We need all of the x's for the next accels
+	 * We could split by chainlngth
+	 * 
 	 */
 	
 	for (int n = 1; n < nprntstps; n++) {
