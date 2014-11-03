@@ -21,8 +21,8 @@ int main() {
 	// Used for timing
 	struct timeval start, end;
 	// Output our alpha and beta values
-	printf("Alpha is:  %lf \n", alpha);
-	printf("Beta is :  %lf \n", beta);
+	printf("Alpha is:  %f \n", alpha);
+	printf("Beta is :  %f \n", beta);
 	
 	// File Pointers!
 	FILE *fp, *fp1, *fp2, *fp3, *fp5, *fp6, *fp7, *fp8;

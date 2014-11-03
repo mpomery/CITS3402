@@ -5,13 +5,13 @@ CC=gcc
 BIN = breather
 OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
-FLAGS = -std=c99 -Wall -Werror -O3
+FLAGS = -std=c99 -Wall -Werror -O3 -fopenmp
 FLAGS2 = -std=c99 -O3
 COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
 
-all : clean parallel original test
+all : clean parallel testparallel
 
 original:
 	cd orig;\
@@ -28,6 +28,9 @@ clobber:
 	$(RM) $(DIRT)
 	$(RM) $(BIN)
 	$(RM) *.dat
+
+testparallel:
+	./breather
 
 test:
 	time ./breather
