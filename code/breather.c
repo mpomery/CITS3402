@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/time.h>
+#include <mpi.h>
 
 #define chainlngth 500
 #define nsprngs (chainlngth+1)
@@ -17,9 +18,13 @@
 
 void accel(double *, double *);
 
-int main() {
+int main(int argc, char ** argv) {
 	// Used for timing
 	struct timeval start, end;
+
+	// MPI Initialization. If the function wasn't enough
+	MPI_Init(&argc, &argv);
+
 	// Output our alpha and beta values
 	printf("Alpha is:  %f \n", alpha);
 	printf("Beta is :  %f \n", beta);
@@ -200,6 +205,9 @@ int main() {
 	double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
 	end.tv_usec - start.tv_usec) / 1.e6;
 	printf("Total time=%f seconds\n", delta);
+	
+	// We have Finished with MPI now
+	MPI_Finalize();
 }
 
 void accel(double *x, double *acc) {

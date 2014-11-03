@@ -1,6 +1,7 @@
 #! /usr/bin/make
 
 CC=/usr/lib64/openmpi/bin/mpicc
+MPIEXEC=/usr/lib64/openmpi/bin/mpiexec
 
 BIN = breather
 OBJECTS = breather.o
@@ -11,7 +12,7 @@ COUNT = | wc -l
 
 #-----------------------------------------------------------------------------
 
-all : clean parallel testparallel
+all : clean parallel mpitest
 
 original:
 	cd orig;\
@@ -19,6 +20,9 @@ original:
 
 parallel:
 	$(CC) $(FLAGS) -o breather breather.c
+
+mpitest:
+	time $(MPIEXEC) -hostfile hosts.txt -np 1 ./breather
 
 clean:
 	$(RM) $(DIRT)
