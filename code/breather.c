@@ -28,9 +28,11 @@ int main(int argc, char ** argv) {
 	// MPI Initialization. If the function wasn't enough
 	MPI_Init(&argc, &argv);
 	
+	// Get the rank for each process and how many processes we have
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	
+	// Print for debugging
 	printf("MPI: Process %d of %d\n", rank, size);
 	
 	// Output our alpha and beta values
@@ -122,8 +124,6 @@ int main(int argc, char ** argv) {
 	fprintf(fp3,"\n");
 	fprintf(fp7,"\n"); 
 	
-	//int n1, prncnt;
-	//n1 = 0;
 	for (int n = 1; n < nprntstps; n++) {
 		#pragma omp parallel for
 		for (int n1 = 1; n1 < prntstps; n1++) {
@@ -141,55 +141,48 @@ int main(int argc, char ** argv) {
 			}
 		}
 		/* Kinetic energies */
-		//prncnt = n1 / prntstps;  //percent completion
-		//if (prncnt == 1) { //if 100% done, print all
-			double te = dx = 0.0;  //reset all variables
-			cmass = 0.0;
-			for (int b = 0; b < chainlngth; b++) {
-				ke[b] = 0.5 * v[b] * v[b]; 
-				fprintf(fp6,"%.10f\t",ke[b]);
-				te += ke[b];
-				if (b == 0) {
-					dx = x[b];
-				} else {
-					dx = x[b] - x[b - 1];
-				}
-				double fac = dx * dx;
-				double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
-				fprintf(fp8,"%.10f\t", temp);
-				te += temp;
-				cmass += x[b];
+		double te = dx = 0.0;  //reset all variables
+		cmass = 0.0;
+		for (int b = 0; b < chainlngth; b++) {
+			ke[b] = 0.5 * v[b] * v[b]; 
+			fprintf(fp6,"%.10f\t",ke[b]);
+			te += ke[b];
+			if (b == 0) {
+				dx = x[b];
+			} else {
+				dx = x[b] - x[b - 1];
 			}
-			fprintf(fp6,"\n");
-			
-			dx = -x[chainlngth - 1];
 			double fac = dx * dx;
-			
-			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
-			te += temp2;
-			
-			fprintf(fp8,"%.10f\n", temp2);
-			
-			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
-			
-			cmass /= chainlngth;
-			
-			fprintf(fp,"%d\t%.10f\n", n, te);
-			
-			for (int b = 0; b < chainlngth; b++) {
-				y[b] = x[b] - cmass;
-				fprintf(fp1,"%.10f\t", y[b]); 
-				fprintf(fp3,"%.10f\t", v[b]); 
-				fprintf(fp7,"%.10f\t", acc[b]); 
-			}
-			fprintf(fp1,"\n"); 
-			fprintf(fp3,"\n"); 
-			fprintf(fp7,"\n"); 
-			
-			//n1 = 1;
-			//printf("%d/%d\n", n, nprntstps);
-			//n++;
-		//}
+			double temp = alpha * 0.5 * fac + alphaby4 * fac * fac;
+			fprintf(fp8,"%.10f\t", temp);
+			te += temp;
+			cmass += x[b];
+		}
+		fprintf(fp6,"\n");
+		
+		dx = -x[chainlngth - 1];
+		double fac = dx * dx;
+		
+		double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
+		te += temp2;
+		
+		fprintf(fp8,"%.10f\n", temp2);
+		
+		fprintf(fp5, "%d\t%.10f\n", 0, cmass);
+		
+		cmass /= chainlngth;
+		
+		fprintf(fp,"%d\t%.10f\n", n, te);
+		
+		for (int b = 0; b < chainlngth; b++) {
+			y[b] = x[b] - cmass;
+			fprintf(fp1,"%.10f\t", y[b]); 
+			fprintf(fp3,"%.10f\t", v[b]); 
+			fprintf(fp7,"%.10f\t", acc[b]); 
+		}
+		fprintf(fp1,"\n"); 
+		fprintf(fp3,"\n"); 
+		fprintf(fp7,"\n"); 
 	}
 	
 	// Close Files
