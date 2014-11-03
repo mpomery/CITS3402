@@ -1,7 +1,7 @@
 #! /usr/bin/make
 
-CC=/usr/lib64/openmpi/bin/mpicc
-MPIEXEC=/usr/lib64/openmpi/bin/mpiexec
+CC=mpicc
+MPIEXEC=mpiexec
 
 BIN = breather
 OBJECTS = breather.o
