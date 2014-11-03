@@ -283,6 +283,7 @@ int main(int argc, char ** argv) {
 		// Send the data back
 		}
 	}
+	MPI_Finalize();
 }
 
 void accel(double *x, double *acc, int len) {
