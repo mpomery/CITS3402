@@ -45,8 +45,8 @@ int main(int argc, char ** argv) {
 		
 		// Start Timing - We only care about the timing on master
 		gettimeofday(&start, NULL);
-
-		// We want all file IO on Master		
+		
+		// We want all file IO on Master
 		// Open Files for Writing
 		fp0 = fopen("toten.dat","w");
 		fp1 = fopen("strsh.dat","w");
@@ -135,7 +135,12 @@ int main(int argc, char ** argv) {
 	 *   - Slave sends back data to print
 	 * That won't work... We need all of the x's for the next accels
 	 * We could split by chainlngth
-	 * 
+	 * So How we Are Going to do this:
+	 * - Everything up to here runs on Master
+	 * - The big main loop runs on Master. Things inside it rely on things prior to it
+	 * - The small for loop gets split up and sent to multiple machines
+	 * - We can Use Motsugo and Mussel for testing (eventually)
+	 * - As chainlnght increases, the use of more computers becomes better and better
 	 */
 	
 	for (int n = 1; n < nprntstps; n++) {
