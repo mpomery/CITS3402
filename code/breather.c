@@ -16,7 +16,7 @@
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
 
-void accel(double *, double *);
+void accel(double *, double *, int);
 
 // MPI Related Variables
 int rank, size;
@@ -104,13 +104,13 @@ int main(int argc, char ** argv) {
 		
 		double dx = 0.0;
 		
-		for (int a = 0; a < chainlngth; a++) { 
+		for (int a = 0; a < chainlngth; a++) {
 			ke[a] = 0.0;
 			fprintf(fp6,"%.10f\t", ke[a]);
 			if (a == 0) {
 				dx = x[a];
 			} else {
-				dx = x[a] - x[a - 1]; 
+				dx = x[a] - x[a - 1];
 			}
 			double fac = dx * dx;
 			pe = alpha * 0.5 * fac + alphaby4 * fac * fac;
@@ -137,17 +137,19 @@ int main(int argc, char ** argv) {
 		fprintf(fp7,"\n"); 
 		
 		//Calculate how much of the chain will be sent to each node
-		int datalength = chainlength / size;
-		printf("DL: %d", datalength);
+		int datalength = chainlngth / size;
+		printf("DL: %d\n", datalength);
 		// For when they don't divide nicely
-		int ourdata = chainlength - (chainlength * size);
-		printf("OD: %d", ourdata);
+		int ourdata = chainlngth - (datalength * (size-1));
+		printf("OD: %d\n", ourdata);
 		
 		// Send datalength to everyone
 		for (int i = 1; i < size; i++) {
-				// Send Data Away
+			// Send Data Away
+			MPI_Send(&datalength, 1, MPI_INT, i, 0, MPI_COMM_WORLD); // Lenght of data
+			MPI_Send(&x[ourdata + ((i - 1) * datalength)], datalength, MPI_DOUBLE, i, 0, MPI_COMM_WORLD); // x's
+			MPI_Send(&v[ourdata + ((i - 1) * datalength)], datalength, MPI_DOUBLE, i, 0, MPI_COMM_WORLD); // velocities
 		}
-		
 		
 		for (int n = 1; n < nprntstps; n++) {
 			// This is what we are going to split up
@@ -167,7 +169,7 @@ int main(int argc, char ** argv) {
 				}
 				
 				/* new accelerations */
-				accel(x, acc);
+				accel(x, acc, ourdata);
 				
 				/* new final velocities */
 				for (int b = 0; b < chainlngth; b++) {
@@ -210,13 +212,13 @@ int main(int argc, char ** argv) {
 			
 			for (int b = 0; b < chainlngth; b++) {
 				y[b] = x[b] - cmass;
-				fprintf(fp1,"%.10f\t", y[b]); 
-				fprintf(fp3,"%.10f\t", v[b]); 
-				fprintf(fp7,"%.10f\t", acc[b]); 
+				fprintf(fp1,"%.10f\t", y[b]);
+				fprintf(fp3,"%.10f\t", v[b]);
+				fprintf(fp7,"%.10f\t", acc[b]);
 			}
-			fprintf(fp1,"\n"); 
-			fprintf(fp3,"\n"); 
-			fprintf(fp7,"\n"); 
+			fprintf(fp1,"\n");
+			fprintf(fp3,"\n");
+			fprintf(fp7,"\n");
 		}
 		
 		// Close Files
@@ -237,34 +239,64 @@ int main(int argc, char ** argv) {
 		
 		// Time how long the operation took
 		gettimeofday(&end, NULL);
-		double delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+		double delta = ((end.tv_sec  - start.tv_sec) * 1000000u +
 		end.tv_usec - start.tv_usec) / 1.e6;
 		printf("Total time=%f seconds\n", delta);
 	}
 	else { // We are a slave node
+		int prntstps = (int) (1.0 / dt);
+		double hdt = 0.5 * dt;
+		double hdt2 = dt * hdt;
 		// Get how big our chainlnght portion is
 		// Receive the data
 		// Run that one loop
 		// Send it back
-		
+		int dl = 0; // How big a data set we deal with
+		MPI_Recv(&dl, 1, MPI_INT, 0,0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		printf("%d Recvd: %d\n", rank, dl);
+
+		double acc[dl];
+
+		// The X's
+		double x[dl]; // How big a data set we deal with
+		MPI_Recv(&x, dl, MPI_DOUBLE, 0,0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		printf("%d Recvd: data for x\n", rank);
+		// Our initial velocities
+		double v[dl]; // How big a data set we deal with
+		MPI_Recv(&v, dl, MPI_DOUBLE, 0,0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		printf("%d Recvd: data for v\n", rank);
+		// Now we process this data
+		for (int n = 1; n < nprntstps; n++) {
+			#pragma omp parallel for
+			for (int n1 = 1; n1 < prntstps; n1++) {
+				/* new positions and mid-velocities; velocity-Verlet algorithm */
+				for (int b = 0; b < dl; b++) {
+					x[b] += dt * v[b] + hdt2 * acc[b];
+				}
+				/* new accelerations */
+				accel(x, acc, dl);
+				/* new final velocities */
+				for (int b = 0; b < dl; b++) {
+					v[b] += hdt * acc[b];
+				}
+			}
+		// Send the data back
+		}
 	}
-	
-	// We have Finished with MPI now
-	MPI_Finalize();
 }
 
-void accel(double *x, double *acc) {
+void accel(double *x, double *acc, int len) {
 	// Not worth parallizing this code, slows it down
 	// Making it run in parallel properly might help
 	// Nope. This in parallel doubles run time
 	#pragma omp parallel for
-	for (int a = 0; a < chainlngth; a++) {
+	for (int a = 0; a < len; a++) {
 		double dximn1 = 0.0;
 		double dxipl1 = 0.0;
 		if (a != 0) {
 			dximn1 = x[a - 1];
 		}
-		if (a + 1 != chainlngth) {
+		if (a + 1 != len) {
 			dxipl1 = x[a + 1];
 		}
 		double dxi = x[a];
@@ -277,4 +309,3 @@ void accel(double *x, double *acc) {
 		acc[a] = alpha * fac + beta * (fac13 - fac23);
 	}
 }
-
