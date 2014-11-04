@@ -8,7 +8,7 @@ OBJECTS = breather.o
 DIRT = *.o *.i *~ */*~ *.log *.exe
 FLAGS = -std=c99 -Wall -Werror -O3 -fopenmp
 FLAGS2 = -std=c99 -O3
-COUNT = | wc -l
+COUNT = -y | wc -l
 
 #-----------------------------------------------------------------------------
 

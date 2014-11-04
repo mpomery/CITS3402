@@ -147,8 +147,6 @@ int main(int argc, char ** argv) {
 		for (int i = 1; i < size; i++) {
 			// Send Data Away
 			MPI_Send(&datalength, 1, MPI_INT, i, 0, MPI_COMM_WORLD); // Lenght of data
-			MPI_Send(&x[ourdata + ((i - 1) * datalength)], datalength, MPI_DOUBLE, i, 0, MPI_COMM_WORLD); // x's
-			MPI_Send(&v[ourdata + ((i - 1) * datalength)], datalength, MPI_DOUBLE, i, 0, MPI_COMM_WORLD); // velocities
 		}
 		
 		for (int n = 1; n < nprntstps; n++) {
@@ -164,18 +162,23 @@ int main(int argc, char ** argv) {
 			#pragma omp parallel for
 			for (int n1 = 1; n1 < prntstps; n1++) {
 				/* new positions and mid-velocities; velocity-Verlet algorithm  */
-				for (int b = 0; b < chainlngth; b++) {
+				for (int b = 0; b < ourdata; b++) {
 					x[b] += dt * v[b] + hdt2 * acc[b];
 				}
-				
 				/* new accelerations */
 				accel(x, acc, ourdata);
-				
 				/* new final velocities */
-				for (int b = 0; b < chainlngth; b++) {
+				for (int b = 0; b < ourdata; b++) {
 					v[b] += hdt * acc[b];
 				}
 			}
+			
+			for (int i = 1; i < size; i++) {
+				// Receive Data Back!
+				MPI_Recv(&x[ourdata + ((i - 1) * datalength)], datalength, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE); // x's
+				MPI_Recv(&v[ourdata + ((i - 1) * datalength)], datalength, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE); // velocities
+			}
+			
 			/* Kinetic energies */
 			double te = dx = 0.0;  //reset all variables
 			cmass = 0.0;
@@ -198,16 +201,11 @@ int main(int argc, char ** argv) {
 			
 			dx = -x[chainlngth - 1];
 			double fac = dx * dx;
-			
 			double temp2 = alpha * 0.5 * fac + alphaby4 * fac * fac;
 			te += temp2;
-			
 			fprintf(fp8,"%.10f\n", temp2);
-			
 			fprintf(fp5, "%d\t%.10f\n", 0, cmass);
-			
 			cmass /= chainlngth;
-			
 			fprintf(fp0,"%d\t%.10f\n", n, te);
 			
 			for (int b = 0; b < chainlngth; b++) {
@@ -252,19 +250,19 @@ int main(int argc, char ** argv) {
 		// Run that one loop
 		// Send it back
 		int dl = 0; // How big a data set we deal with
-		MPI_Recv(&dl, 1, MPI_INT, 0,0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		MPI_Recv(&dl, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 		printf("%d Recvd: %d\n", rank, dl);
 
 		double acc[dl];
 
 		// The X's
-		double x[dl]; // How big a data set we deal with
-		MPI_Recv(&x, dl, MPI_DOUBLE, 0,0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		printf("%d Recvd: data for x\n", rank);
+		double x[dl];
 		// Our initial velocities
-		double v[dl]; // How big a data set we deal with
-		MPI_Recv(&v, dl, MPI_DOUBLE, 0,0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		printf("%d Recvd: data for v\n", rank);
+		double v[dl];
+		for (int i = 0; i < dl; i++) {
+			x[i] = 0;
+			v[i] = 0;
+
 		// Now we process this data
 		for (int n = 1; n < nprntstps; n++) {
 			#pragma omp parallel for
@@ -280,7 +278,9 @@ int main(int argc, char ** argv) {
 					v[b] += hdt * acc[b];
 				}
 			}
-		// Send the data back
+			// Send the data back
+			MPI_Send(&x, dl, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+			MPI_Send(&v, dl, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 		}
 	}
 	MPI_Finalize();
