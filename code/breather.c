@@ -150,13 +150,10 @@ int main(int argc, char ** argv) {
 		}
 		
 		for (int n = 1; n < nprntstps; n++) {
+			
 			// This is what we are going to split up
 			// Split the arrays into multiple parts and seen the processing to
 			// external nodes, then recombine on the master
-			
-			for (int i = 1; i < size; i++) {
-				// Send Data Away
-			}
 			
 			// Process our section
 			#pragma omp parallel for
