@@ -7,11 +7,11 @@
 #include <sys/time.h>
 #include <mpi.h>
 
-#define chainlngth 500
+#define chainlngth 60
 #define nsprngs (chainlngth+1)
 #define nmode 100  /* Ignore; not used here */
-#define nprntstps 10001 /* Number of output lines */
-#define dt 0.001 /* Time step */
+#define nprntstps 100 /* Number of output lines */
+#define dt 0.00001 /* Time step */
 #define beta 0.7 /* Beware! beta is the nonlinear coefficient! */
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
@@ -259,10 +259,12 @@ int main(int argc, char ** argv) {
 		double x[dl];
 		// Our initial velocities
 		double v[dl];
+		
 		for (int i = 0; i < dl; i++) {
 			x[i] = 0;
 			v[i] = 0;
-
+		}
+		
 		// Now we process this data
 		for (int n = 1; n < nprntstps; n++) {
 			#pragma omp parallel for

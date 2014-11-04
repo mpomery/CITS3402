@@ -6,11 +6,11 @@
 #include <math.h>
 #include <sys/time.h>
 
-#define chainlngth 500
+#define chainlngth 60
 #define nsprngs (chainlngth+1)
 #define nmode 100  /* Ignore; not used here */
-#define nprntstps 10001 /* Number of output lines */
-#define dt 0.001 /* Time step */
+#define nprntstps 100 /* Number of output lines */
+#define dt 0.000001 /* Time step */
 #define beta 0.7 /* Beware! beta is the nonlinear coefficient! */
 		/* Usually alpha and beta appaears interchanged in literature */
 #define alpha .16 /* alpha is the coefficient of the linear term! */
