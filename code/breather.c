@@ -146,7 +146,7 @@ int main(int argc, char ** argv) {
 		// Send datalength to everyone
 		for (int i = 1; i < size; i++) {
 			// Send Data Away
-			MPI_Send(&datalength, 1, MPI_INT, i, 0, MPI_COMM_WORLD); // Lenght of data
+			MPI_Send(&datalength, 1, MPI_INT, i, 0, MPI_COMM_WORLD); // Length of data
 		}
 		
 		for (int n = 1; n < nprntstps; n++) {
@@ -156,6 +156,7 @@ int main(int argc, char ** argv) {
 			// external nodes, then recombine on the master
 			
 			// Process our section
+			// This loop has to run on one machine
 			#pragma omp parallel for
 			for (int n1 = 1; n1 < prntstps; n1++) {
 				/* new positions and mid-velocities; velocity-Verlet algorithm  */
